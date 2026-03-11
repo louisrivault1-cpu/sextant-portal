@@ -37,6 +37,43 @@
     setTimeout(initGlobeTip,400);
   };
 })();
+
+/* ════ Globe zoom on click + nav lock ════ */
+(function(){
+  function applyGlobeEnhancements(){
+    // Override showCountry for zoom
+    var _origShow=window.showCountry;
+    if(!_origShow||_origShow._enhanced) return;
+    window.showCountry=function(iso){
+      var r=_origShow.apply(this,arguments);
+      if(iso){
+        setTimeout(function(){if(window.globeZoom)window.globeZoom(2.2);},60);
+      } else {
+        if(window.globeZoom)window.globeZoom(1);
+      }
+      return r;
+    };
+    window.showCountry._enhanced=true;
+    // Override globeGoTo to set nav lock (stops inertia)
+    var _origGoTo=window.globeGoTo;
+    if(_origGoTo&&!_origGoTo._enhanced){
+      window.globeGoTo=function(iso){
+        window._globeNavLock=true;
+        setTimeout(function(){window._globeNavLock=false;},1100);
+        return _origGoTo.apply(this,arguments);
+      };
+      window.globeGoTo._enhanced=true;
+    }
+  }
+  window.addEventListener('load',function(){setTimeout(applyGlobeEnhancements,600);});
+  var _origShowPage=window.showPage;
+  if(typeof _origShowPage==='function'){
+    window.showPage=function(){
+      _origShowPage.apply(this,arguments);
+      setTimeout(applyGlobeEnhancements,400);
+    };
+  }
+})();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -5945,7 +5982,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     function endDrag(){
       if(!dragging)return;dragging=false;
       function inertia(){
-        vx*=.96;vy*=.96;
+        if(window._globeNavLock){vx=0;vy=0;return;}vx*=.96;vy*=.96;
         if(Math.abs(vx)<.02&&Math.abs(vy)<.02)return;
         const r=proj.rotate();
         proj.rotate([r[0]+vx*.25,Math.max(-80,Math.min(80,r[1]-vy*.25)),r[2]]);
