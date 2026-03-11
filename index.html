@@ -2132,6 +2132,12 @@ button:active{transform:scale(.97);transition:transform .1s linear;will-change:t
 .mad-step{transform:scale(.7)!important;opacity:0!important;transition:transform .2s ease,opacity .2s ease!important;}
 .mad-step.visible{transform:scale(1)!important;opacity:1!important;}
 .mad-step-title.al-sel{background:rgba(138,115,64,.2)!important;cursor:pointer;}
+
+/* ════ GradientText ════ */
+@keyframes gt-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.gt{background:linear-gradient(90deg,#D4AF37,#FFE58A,#E8C860,#C8922E,#FFE58A,#D4AF37);background-size:300% 300%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:gt-shift 8s ease infinite;display:inline-block;}
+/* ════ Country labels ════ */
+.country-label{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;fill:rgba(212,175,55,.6);text-anchor:middle;pointer-events:none;letter-spacing:.5px;text-transform:uppercase;}
 </style>
 
 <div id="login-overlay">
@@ -6093,30 +6099,22 @@ function isVisible(lon,lat){
 function redrawPorts(selIso){
   portG.selectAll('*').remove();
   labelG.selectAll('*').remove();
+  if(!selIso)return;
   PORTS.forEach(p=>{
+    if(p.iso!==selIso)return;
     const pt=proj([p.lon,p.lat]);
     if(!pt||!isVisible(p.lon,p.lat))return;
     const[x,y]=pt;
-    const isSel=(p.iso===selIso);
-    const dotR=isSel?5:3.5;
-    const dotCol=isSel?'#ff7733':'#d4920a';
-    if(isSel){
-      portG.append('circle').attr('class','port-ring')
-        .attr('cx',x).attr('cy',y).attr('r',dotR+4);
-    }
+    portG.append('circle').attr('class','port-ring').attr('cx',x).attr('cy',y).attr('r',10);
     portG.append('circle').attr('class','port-dot')
-      .attr('cx',x).attr('cy',y).attr('r',dotR)
-      .style('fill',dotCol)
+      .attr('cx',x).attr('cy',y).attr('r',5)
+      .style('fill','#ff7733')
       .on('click',()=>showCountry(p.iso))
-      .on('mouseenter',()=>{tip.textContent='⚓ '+p.name+' — '+C[p.iso].name;tip.style.opacity='1';})
+      .on('mouseenter',()=>{tip.textContent='⚠️ '+p.name+' — '+(C[p.iso]?C[p.iso].name:'');tip.style.opacity='1';})
       .on('mouseleave',()=>tip.style.opacity='0');
-    // Label sans getBBox (supprime le coût de layout)
-    labelG.append('text')
-      .attr('class','port-name')
-      .attr('x',x+6).attr('y',y-4)
-      .text(p.name)
-      .style('fill',isSel?'#ffc080':'#f5c84a')
-      .style('font-size',isSel?'9px':'7.5px');
+    labelG.append('text').attr('class','port-name')
+      .attr('x',x+6).attr('y',y-4).text(p.name)
+      .style('fill','#ffc080').style('font-size','9px');
   });
 }
 
@@ -6212,9 +6210,21 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         showCountry(iso);
       });
 
+    const cLabelG=svg.append('g').attr('class','clabel-layer');
+    const cLabelData=countries.features.filter(d=>{const iso=ISO_NUM[String(d.id)];return iso&&MSC_SET.has(iso);});
+    const cLabels=cLabelG.selectAll('text').data(cLabelData).join('text')
+      .attr('class','country-label')
+      .text(d=>{const iso=ISO_NUM[String(d.id)];return C[iso]?C[iso].flag+' '+C[iso].name:'';})
+      .attr('opacity',0);
     function redraw(selIso){
       gratG.select('.graticule').attr('d',gpath);
       paths.attr('d',gpath);
+      cLabels.each(function(d){
+        const iso=ISO_NUM[String(d.id)];
+        const cnt=d3.geoCentroid(d);
+        if(isVisible(cnt[0],cnt[1])){const pt=proj(cnt);d3.select(this).attr('x',pt[0]).attr('y',pt[1]).attr('opacity',1);}
+        else{d3.select(this).attr('opacity',0);}
+      });
       redrawPorts(selIso!==undefined?selIso:currentSel);
     }
     _globeRedraw=redraw;
@@ -6236,8 +6246,8 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     function endDrag(){
       if(!dragging)return;dragging=false;
       function inertia(){
-        vx*=.93;vy*=.93;
-        if(Math.abs(vx)<.04&&Math.abs(vy)<.04)return;
+        vx*=.96;vy*=.96;
+        if(Math.abs(vx)<.02&&Math.abs(vy)<.02)return;
         const r=proj.rotate();
         proj.rotate([r[0]+vx*.25,Math.max(-80,Math.min(80,r[1]-vy*.25)),r[2]]);
         redraw();animId=requestAnimationFrame(inertia);
@@ -8023,6 +8033,23 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 (function(){const orig=window.renderNewsWall;if(!orig)return;window.renderNewsWall=function(){orig.apply(this,arguments);const grid=document.getElementById('news-grid');if(!grid)return;const items=[...grid.querySelectorAll('.news-bubble')];if(!items.length)return;items.forEach(b=>b.classList.add('al-item'));const parent=grid.parentElement;if(!parent._al){const wrap=document.createElement('div');wrap.className='al-wrap';const sd=document.createElement('div');sd.className='al-scroll';grid.parentNode.insertBefore(wrap,grid);wrap.appendChild(sd);sd.appendChild(grid);sd._al=new AnimatedList(sd,{showGradients:true,keyNav:true});parent._al=sd._al;}else{parent._al.refresh();}};})();
 /* ── Hook: showMADPol ── */
 (function(){const orig=window.showMADPol;if(!orig)return;window.showMADPol=function(){orig.apply(this,arguments);setTimeout(function(){const body=document.getElementById('mad-pol-body');if(!body)return;const steps=[...body.querySelectorAll('.mad-step-title')];steps.forEach(function(s){s.classList.add('al-item');if(!s._alB){s._alB=true;const io=new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('al-in',e.isIntersecting);});},{threshold:.3});io.observe(s);}});},180);};})();
+
+/* ── GradientText on portal titles ── */
+(function(){
+  function wrapGT(el){
+    const nodes=[...el.childNodes];
+    nodes.forEach(n=>{
+      if(n.nodeType===3&&n.textContent.trim()){
+        const s=document.createElement('span');
+        s.className='gt';s.textContent=n.textContent;
+        el.replaceChild(s,n);
+      }
+    });
+  }
+  document.querySelectorAll('h1,h2').forEach(el=>{
+    if(!el.querySelector('.gt')&&!el.closest('.guide-section')&&!el.closest('.ab-feat')) wrapGT(el);
+  });
+})();
 </script>
 </body>
 </html>
