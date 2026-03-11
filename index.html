@@ -38,42 +38,53 @@
   };
 })();
 
-/* ════ Globe zoom on click + nav lock ════ */
+/* ════ Globe zoom v3 – animated + deep ════ */
 (function(){
+  var _zTid=null,_zShow=null;
+  function _sz(factor,dur){
+    if(_zTid){cancelAnimationFrame(_zTid);_zTid=null;}
+    var N=Math.max(1,Math.round((dur||400)/16));
+    var f=Math.pow(Math.max(0.0001,factor),1/N);
+    var s=0;
+    (function tick(){
+      if(s>=N){_zTid=null;return;}
+      window.globeZoom(f);s++;
+      _zTid=requestAnimationFrame(tick);
+    })();
+  }
+  function _zIn(){_sz(10,500);}
+  function _zOut(){
+    var f=(window._globeBaseR&&window._globeR&&window._globeR>1)?(window._globeBaseR/window._globeR):0.1;
+    _sz(f,350);
+  }
   function applyGlobeEnhancements(){
-    // Override showCountry for zoom
     var _origShow=window.showCountry;
-    if(!_origShow||_origShow._enhanced) return;
+    if(!_origShow||_origShow._enhanced)return;
     window.showCountry=function(iso){
       var r=_origShow.apply(this,arguments);
-      if(iso){
-        setTimeout(function(){if(window.globeZoom)window.globeZoom(2.2);},60);
-      } else {
-        if(window.globeZoom)window.globeZoom(1);
-      }
+      if(iso){clearTimeout(_zShow);_zShow=setTimeout(_zIn,150);}
       return r;
     };
     window.showCountry._enhanced=true;
-    // Override globeGoTo to set nav lock (stops inertia)
     var _origGoTo=window.globeGoTo;
     if(_origGoTo&&!_origGoTo._enhanced){
       window.globeGoTo=function(iso){
+        clearTimeout(_zShow);
         window._globeNavLock=true;
-        setTimeout(function(){window._globeNavLock=false;},1100);
+        setTimeout(function(){window._globeNavLock=false;},1200);
+        _zOut();
+        setTimeout(_zIn,900);
         return _origGoTo.apply(this,arguments);
       };
       window.globeGoTo._enhanced=true;
     }
   }
   window.addEventListener('load',function(){setTimeout(applyGlobeEnhancements,600);});
-  var _origShowPage=window.showPage;
-  if(typeof _origShowPage==='function'){
-    window.showPage=function(){
-      _origShowPage.apply(this,arguments);
-      setTimeout(applyGlobeEnhancements,400);
-    };
+  var _origSP=window.showPage;
+  if(typeof _origSP==='function'){
+    window.showPage=function(){_origSP.apply(this,arguments);setTimeout(applyGlobeEnhancements,400);};
   }
-})();
+})()
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -5898,7 +5909,7 @@ function globeGoTo(iso){
 
 // globeZoom : compatibilité avec les boutons +/- du HTML
 function globeZoom(factor){
-  R=Math.max(110,Math.min(Math.min(W,H)*.72,R*factor));
+  if(!window._globeBaseR)window._globeBaseR=R;R=Math.max(110,Math.min(Math.min(W,H)*8,R*factor));window._globeR=R;
   proj.scale(R);
   [sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
   if(_globeRedraw)_globeRedraw();
