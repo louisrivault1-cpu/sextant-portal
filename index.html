@@ -7,43 +7,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js">
 /* ════ Globe hover tooltip ════ */
 (function(){
-  var tip=document.getElementById('globe-tip');
-  if(!tip) return;
-  var globeSvg=document.querySelector('#pg-globe svg, #globe-wrap svg, .globe-svg, svg.globe');
-  if(!globeSvg){
-    // Try to find it after page load
-    document.addEventListener('DOMContentLoaded',function(){ initGlobeTip(); });
-    window.addEventListener('load',function(){ initGlobeTip(); });
-  } else { initGlobeTip(); }
   function initGlobeTip(){
+    var tip=document.getElementById('globe-tip');
     var svg=document.querySelector('svg');
-    if(!svg||svg._tipInited) return;
+    if(!tip||!svg||svg._tipInited) return;
+    if(!window.ISO_NUM||!window.MSC_SET) return;
     svg._tipInited=true;
     svg.addEventListener('mousemove',function(e){
       var el=document.elementFromPoint(e.clientX,e.clientY);
-      if(!el||el.tagName!=='path') { tip.style.opacity='0'; return; }
+      if(!el||el.tagName!=='path'){tip.style.opacity='0';return;}
       var d=el.__data__;
-      if(!d) { tip.style.opacity='0'; return; }
-      var iso=window.ISO_NUM&&window.ISO_NUM[String(d.id)];
-      if(!iso||!window.MSC_SET||!window.MSC_SET.has(iso)){ tip.style.opacity='0'; return; }
+      if(!d){tip.style.opacity='0';return;}
+      var iso=window.ISO_NUM[String(d.id)];
+      if(!iso||!window.MSC_SET.has(iso)){tip.style.opacity='0';return;}
       var info=window.C&&window.C[iso];
-      if(!info){ tip.style.opacity='0'; return; }
-      var rect=svg.closest('[style*="position"]')||svg.parentElement;
-      var pr=rect?rect.getBoundingClientRect():{left:0,top:0};
-      tip.textContent=(info.flag||'')+' '+info.name;
-      tip.style.left=(e.clientX-pr.left)+'px';
-      tip.style.top=(e.clientY-pr.top-10)+'px';
+      if(!info){tip.style.opacity='0';return;}
+      var svgBox=svg.parentElement.getBoundingClientRect();
+      tip.textContent=(info.flag||'')+' '+info.name;
+      tip.style.left=(e.clientX-svgBox.left)+'px';
+      tip.style.top=(e.clientY-svgBox.top-14)+'px';
       tip.style.opacity='1';
     });
-    svg.addEventListener('mouseleave',function(){
-      tip.style.opacity='0';
-    });
+    svg.addEventListener('mouseleave',function(){tip.style.opacity='0';});
   }
-  // Re-init when globe page is shown
+  window.addEventListener('load',function(){setTimeout(initGlobeTip,500);});
   var origShowPage=window.showPage;
-  if(origShowPage) window.showPage=function(){
+  if(typeof origShowPage==='function') window.showPage=function(){
     origShowPage.apply(this,arguments);
-    setTimeout(initGlobeTip,300);
+    setTimeout(initGlobeTip,400);
   };
 })();
 </script>
@@ -4494,6 +4485,7 @@ const FORCED_CENTROIDS={
 
 const ISO_NUM={"056":"BEL","528":"NLD","276":"DEU","616":"POL","724":"ESP","620":"PRT","380":"ITA","826":"GBR","372":"IRL","752":"SWE","208":"DNK","792":"TUR","300":"GRC","191":"HRV","440":"LTU","203":"CZE","642":"ROU","250":"FRA","705":"SVN","428":"LVA","756":"CHE","348":"HUN","233":"EST"};
 const MSC_SET=new Set(Object.keys(C));
+window.ISO_NUM=ISO_NUM;window.MSC_SET=MSC_SET;window.C=C;window.PORTS=PORTS;
 
 const CLS1=["Taux vérifié via PCS/TMS RATE (pas les 3 petits points)","Shipper's remarks lus entièrement","Elsewhere Company ajoutée dès le booking","Carrier → 'intermodal for merchant' coché si trucking","Payterm et devise sur charges vérifiés","55€/IMO LABEL si capitainerie demandée","Wizard client vérifié avant saisie charges FOB","POD correct vérifié sur BC agents","Référence facturation présente"];
 const CLS2=["Full Collect → aucune charge saisie en prepaid","Booking dangereux → lignes IMO maintenues","Port-au-Prince → feu vert Ligne vérifié","FOB Anvers → mail nadine.vanhoegaerden@msc.com envoyé","Rotterdam → PORTBASE mentionné dans confirmation","Espagne/Portugal → VGM délai respecté","Frais client notifiés par écrit avant occurrence","Infos contradictoires → confirmation client avant saisie"];
