@@ -2116,6 +2116,22 @@ button:active{transform:scale(.97);transition:transform .1s linear;will-change:t
 #topbar{contain:layout style}
 #micro-panel{contain:layout style paint}
 .news-bubble,.news-bubble-content,.mdepot-card,.mpill,.tn,.ptab{will-change:transform}
+
+/* ════ ANIMATED LIST — news & mad ════ */
+.al-wrap{position:relative;}
+.al-scroll{max-height:520px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gold-dim,#8a7340) #06000f;}
+.al-scroll::-webkit-scrollbar{width:6px;}
+.al-scroll::-webkit-scrollbar-track{background:#06000f;}
+.al-scroll::-webkit-scrollbar-thumb{background:var(--gold-dim,#8a7340);border-radius:3px;}
+.al-item{transform:scale(.7);opacity:0;transition:transform .2s ease,opacity .2s ease;will-change:transform,opacity;}
+.al-item.al-in{transform:scale(1);opacity:1;}
+.al-item.al-sel{background:rgba(138,115,64,.12)!important;outline:1px solid rgba(138,115,64,.3);outline-offset:2px;border-radius:6px;}
+.al-gt,.al-gb{position:absolute;left:0;right:0;height:60px;pointer-events:none;z-index:5;transition:opacity .3s;}
+.al-gt{top:0;background:linear-gradient(to bottom,var(--black,#06000f) 0%,transparent 100%);}
+.al-gb{bottom:0;background:linear-gradient(to top,var(--black,#06000f) 0%,transparent 100%);}
+.mad-step{transform:scale(.7)!important;opacity:0!important;transition:transform .2s ease,opacity .2s ease!important;}
+.mad-step.visible{transform:scale(1)!important;opacity:1!important;}
+.mad-step-title.al-sel{background:rgba(138,115,64,.2)!important;cursor:pointer;}
 </style>
 
 <div id="login-overlay">
@@ -7991,6 +8007,22 @@ function resetData(){
     setTimeout(initGuideObs,500);
   })();
 })();
+
+/* ════ AnimatedList — vanilla ════ */
+window.AnimatedList=class{constructor(scrollEl,opts){this.scroll=scrollEl;this.opts=Object.assign({showGradients:true,keyNav:true,onSelect:null},opts||{});this.selectedIdx=-1;this._io=new IntersectionObserver(entries=>{entries.forEach(e=>e.target.classList.toggle('al-in',e.isIntersecting));},{root:scrollEl,threshold:.5});if(this.opts.showGradients)this._buildGrad();if(this.opts.keyNav){this._kh=this._onKey.bind(this);window.addEventListener('keydown',this._kh);}this.refresh();}
+items(){return[...this.scroll.querySelectorAll('.al-item')];}
+_buildGrad(){const p=this.scroll.parentElement;if(!p)return;const gt=document.createElement('div');gt.className='al-gt';gt.style.opacity=0;const gb=document.createElement('div');gb.className='al-gb';p.classList.add('al-wrap');p.appendChild(gt);p.appendChild(gb);this._gt=gt;this._gb=gb;this.scroll.addEventListener('scroll',()=>this._grad());this._grad();}
+_grad(){const{scrollTop,scrollHeight,clientHeight}=this.scroll;if(this._gt)this._gt.style.opacity=Math.min(scrollTop/50,1);if(this._gb)this._gb.style.opacity=scrollHeight<=clientHeight?0:Math.min((scrollHeight-scrollTop-clientHeight)/50,1);}
+refresh(){this._io.disconnect();this.items().forEach((el,i)=>{if(!el._alB){el._alB=true;el.addEventListener('mouseenter',()=>this._sel(i));el.addEventListener('click',()=>{this._sel(i);this.opts.onSelect&&this.opts.onSelect(el,i);});}this._io.observe(el);});if(this._gb)this._grad();}
+_sel(i){this.items().forEach((el,j)=>el.classList.toggle('al-sel',j===i));this.selectedIdx=i;}
+_onKey(e){const items=this.items();if(!items.length)return;if(e.key==='ArrowDown'){e.preventDefault();this._sel(Math.min(this.selectedIdx+1,items.length-1));items[this.selectedIdx]?.scrollIntoView({behavior:'smooth',block:'nearest'});}else if(e.key==='ArrowUp'){e.preventDefault();this._sel(Math.max(this.selectedIdx-1,0));items[this.selectedIdx]?.scrollIntoView({behavior:'smooth',block:'nearest'});}else if(e.key==='Enter'&&this.selectedIdx>=0)this.opts.onSelect&&this.opts.onSelect(items[this.selectedIdx],this.selectedIdx);}
+destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown',this._kh);}
+};
+
+/* ── Hook: renderNewsWall ── */
+(function(){const orig=window.renderNewsWall;if(!orig)return;window.renderNewsWall=function(){orig.apply(this,arguments);const grid=document.getElementById('news-grid');if(!grid)return;const items=[...grid.querySelectorAll('.news-bubble')];if(!items.length)return;items.forEach(b=>b.classList.add('al-item'));const parent=grid.parentElement;if(!parent._al){const wrap=document.createElement('div');wrap.className='al-wrap';const sd=document.createElement('div');sd.className='al-scroll';grid.parentNode.insertBefore(wrap,grid);wrap.appendChild(sd);sd.appendChild(grid);sd._al=new AnimatedList(sd,{showGradients:true,keyNav:true});parent._al=sd._al;}else{parent._al.refresh();}};})();
+/* ── Hook: showMADPol ── */
+(function(){const orig=window.showMADPol;if(!orig)return;window.showMADPol=function(){orig.apply(this,arguments);setTimeout(function(){const body=document.getElementById('mad-pol-body');if(!body)return;const steps=[...body.querySelectorAll('.mad-step-title')];steps.forEach(function(s){s.classList.add('al-item');if(!s._alB){s._alB=true;const io=new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('al-in',e.isIntersecting);});},{threshold:.3});io.observe(s);}});},180);};})();
 </script>
 </body>
 </html>
