@@ -3097,128 +3097,6 @@ function forgotStep2(){
 </div>
 </div>
 
-</div></div>
-</div>
-<div id="pg-calc" class="page">
-<div class="hero"><div><h2>Calculateurs <em>Intégrés</em></h2><p>Truck · Barge/Rail · Dépassement OOG</p></div></div>
-<div class="inner"><div class="wrap">
-<div class="calc">
-  <div class="calc-hd"><div class="calc-ic">🚚</div><div><div class="calc-t">Truck — Heures d'Attente</div><div class="calc-d">Tout route · 40€ / 30min entamée</div></div></div>
-  <div class="calc-b">
-    <div class="cg">
-      <div class="cf"><label>Waiting time (min)</label><input type="number" id="wt-min" placeholder="ex: 340" min="0"></div>
-      <div class="cf"><label>Free waiting time (min)</label><input type="number" id="wt-free" value="120" min="0"></div>
-    </div>
-    <button class="cbtn2" onclick="calcTruck()">Calculer</button>
-    <div class="cres" id="wt-res" style="display:none"><div id="wt-out"></div></div>
-  </div>
-</div>
-
-<div class="calc">
-  <div class="calc-hd"><div class="calc-ic">🚢</div><div><div class="calc-t">Barge / Rail — Heures d'Attente</div><div class="calc-d">55€ / 30min · Après 5h : 110€ / 30min</div></div></div>
-  <div class="calc-b">
-    <div class="cg">
-      <div class="cf"><label>Waiting time (min)</label><input type="number" id="wc-min" placeholder="ex: 165" min="0"></div>
-      <div class="cf"><label>Free waiting time (min)</label><input type="number" id="wc-free" value="120" min="0"></div>
-    </div>
-    <button class="cbtn2" onclick="calcCombi()">Calculer</button>
-    <div class="cres" id="wc-res" style="display:none"><div id="wc-out"></div></div>
-    <div style="margin-top:12px"><div class="hb y" style="margin:0"><div class="hb-ic">ℹ️</div><div class="hb-tx"><h5>Conditions Barge/Rail</h5><p>55€ / 30min entamée · À partir de la 5ème heure (free waiting time inclus) : 110€ / 30min<br>Chaque demi-heure entamée est due.</p></div></div></div>
-  </div>
-</div>
-
-<div class="calc">
-  <div class="calc-hd">
-    <div class="calc-ic">📐</div>
-    <div>
-      <div class="calc-t">Calculateur OOG / Dépassement</div>
-      <div class="calc-d">Saisir en centimètres · Largeur = divisée par 2 · Génère le texte cargo description</div>
-    </div>
-  </div>
-  <div class="calc-b">
-    <!-- Ligne 1 : type conteneur + gabarit dynamique -->
-    <div class="cg" style="margin-bottom:8px">
-      <div class="cf">
-        <label>Type conteneur</label>
-        <select id="d-tp" onchange="updateGabarit()">
-          <option value="ot20">Open Top 20'</option>
-          <option value="ot">Open Top 40'</option>
-          <option value="fr">Flat Rack</option>
-          <option value="frc">Flat Rack Collapsible</option>
-        </select>
-      </div>
-      <div class="cf" style="grid-column:span 2">
-        <label>Gabarit de référence</label>
-        <div id="d-gabarit" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--gold-dim);padding:8px 10px;background:var(--black2);border:1px solid var(--gray1);border-radius:2px;line-height:1.6">
-          L 1203 cm × l 235 cm × H Ouvert | Max 28 000 kg
-        </div>
-      </div>
-    </div>
-    <!-- Ligne 2 : dimensions marchandise -->
-    <div class="cg">
-      <div class="cf"><label>Longueur (cm)</label><input type="number" id="d-l" placeholder="ex: 1226" step="1"></div>
-      <div class="cf"><label>Largeur (cm)</label><input type="number" id="d-w" placeholder="ex: 258" step="1"></div>
-      <div class="cf"><label>Hauteur (cm)</label><input type="number" id="d-h" placeholder="ex: 347" step="1"></div>
-      <div class="cf"><label>Hauteur conteneur (cm)</label><input type="number" id="d-hc" placeholder="ex: 239" step="1"></div>
-      <div class="cf"><label>Poids brut (kg)</label><input type="number" id="d-p" placeholder="ex: 18500" step="1"></div>
-    </div>
-    <!-- Options -->
-    <div style="display:flex;gap:20px;margin:10px 0 14px;flex-wrap:wrap">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.8rem;color:var(--gray5)">
-        <input type="checkbox" id="d-tarp" style="accent-color:var(--gold);width:15px;height:15px"> Avec bâche (WITH TARPAULIN)
-      </label>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.8rem;color:var(--gray5)">
-        <input type="checkbox" id="d-anchor" style="accent-color:var(--gold);width:15px;height:15px"> Anneaux d'ancrage (ANCHOR RINGS)
-      </label>
-    </div>
-    <button class="cbtn2" onclick="calcD()">Calculer OOG</button>
-    <!-- Résultat -->
-    <div id="d-res" style="display:none;margin-top:14px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div>
-          <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📦 Bloc 1 — Infos marchandise</div>
-          <div id="d-bloc1" class="cres" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;white-space:pre-wrap"></div>
-          <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-bloc1')">📋 Copier Bloc 1</button>
-        </div>
-        <div>
-          <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📐 Bloc 2 — Dépassement OOG</div>
-          <div id="d-bloc2" class="cres" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;white-space:pre-wrap"></div>
-          <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-bloc2')">📋 Copier Bloc 2</button>
-        </div>
-      </div>
-      <button class="cbtn2" style="margin-top:10px;font-size:.72rem;padding:6px 18px;background:var(--gray2);color:var(--white)" onclick="copyBlocAll()">📋 Copier les 2 blocs</button>
-      <!-- Cargo Description auto -->
-      <div style="margin-top:14px;border-top:1px solid var(--gray1);padding-top:10px">
-        <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📝 Cargo Description (copier dans Link)</div>
-        <div id="d-cargo" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;background:var(--black2);border:1px solid var(--gray1);padding:8px 10px;border-radius:2px;white-space:pre-wrap"></div>
-        <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-cargo')">📋 Copier Cargo Description</button>
-      </div>
-    </div>
-    <!-- Exemples OOG -->
-    <div style="margin-top:20px;border-top:1px solid var(--gray1);padding-top:14px">
-      <button onclick="toggleExemples()" style="font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray4);display:flex;align-items:center;gap:8px;cursor:pointer">
-        <span id="ex-arrow">▶</span> Exemples de référence OOG
-      </button>
-      <div id="ex-panel" style="display:none;margin-top:12px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
-          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Open Top — Dépassement H</h4><p>Avec release</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">OPEN TOP
-SIN VICERA
-H 347 CM
-OVER DIMENSION 108 CM
-RELEASE : <a href="/cdn-cgi/l/email-protection#601412010609030f20130512100f12144e02091a"><span class="__cf_email__" data-cfemail="601412010609030f20130512100f12144e02091a">[email&#160;protected]</span></a></div></div></div>
-          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Flat Rack Collapsible</h4><p>Dépassement largeur</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">FLATRACK COLLAPSIBLE
-EBKG14965078
-W 11.5 CM EACH SIDE
-(23 CM / 2 = 11.5 CM)</div></div></div>
-          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Open Top — Free Clause</h4><p>Avec bâche + anneaux</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">OPEN TOP : FREE CLAUSE
-WITH TARPAULIN
-ANCHOR RINGS</div></div></div>
-        </div>
-        <div class="hb y" style="margin-top:12px"><div class="hb-ic">📋</div><div class="hb-tx"><h5>Procédure OOG — Rappel</h5><p>1. Renseigner les dimensions en cm (pas de clauses à mettre)<br>2. Renseigner le dépassement (W = divisé par 2 — un côté)<br>3. Renseigner les mêmes infos dans le booking (partie Dépassement)<br>4. Open Top sans dépassement H = FREE CLAUSE<br>5. Crochets d'arrimage = ANCHOR RINGS<br>6. Avec bâche = WITH TARPAULIN<br>7. Flat Rack Collapsible : mentionner COLLAPSIBLE + référence booking<br>8. Toujours mettre le RELEASE si fourni</p></div></div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <!-- ════ SAAS DEV GUIDE ════ -->
@@ -3545,6 +3423,129 @@ CREATE INDEX CONCURRENTLY idx_tasks_org_status
 
 </div><!-- /guide-ebook -->
 </div><!-- /pt-saas -->
+</div></div>
+</div>
+<div id="pg-calc" class="page">
+<div class="hero"><div><h2>Calculateurs <em>Intégrés</em></h2><p>Truck · Barge/Rail · Dépassement OOG</p></div></div>
+<div class="inner"><div class="wrap">
+<div class="calc">
+  <div class="calc-hd"><div class="calc-ic">🚚</div><div><div class="calc-t">Truck — Heures d'Attente</div><div class="calc-d">Tout route · 40€ / 30min entamée</div></div></div>
+  <div class="calc-b">
+    <div class="cg">
+      <div class="cf"><label>Waiting time (min)</label><input type="number" id="wt-min" placeholder="ex: 340" min="0"></div>
+      <div class="cf"><label>Free waiting time (min)</label><input type="number" id="wt-free" value="120" min="0"></div>
+    </div>
+    <button class="cbtn2" onclick="calcTruck()">Calculer</button>
+    <div class="cres" id="wt-res" style="display:none"><div id="wt-out"></div></div>
+  </div>
+</div>
+
+<div class="calc">
+  <div class="calc-hd"><div class="calc-ic">🚢</div><div><div class="calc-t">Barge / Rail — Heures d'Attente</div><div class="calc-d">55€ / 30min · Après 5h : 110€ / 30min</div></div></div>
+  <div class="calc-b">
+    <div class="cg">
+      <div class="cf"><label>Waiting time (min)</label><input type="number" id="wc-min" placeholder="ex: 165" min="0"></div>
+      <div class="cf"><label>Free waiting time (min)</label><input type="number" id="wc-free" value="120" min="0"></div>
+    </div>
+    <button class="cbtn2" onclick="calcCombi()">Calculer</button>
+    <div class="cres" id="wc-res" style="display:none"><div id="wc-out"></div></div>
+    <div style="margin-top:12px"><div class="hb y" style="margin:0"><div class="hb-ic">ℹ️</div><div class="hb-tx"><h5>Conditions Barge/Rail</h5><p>55€ / 30min entamée · À partir de la 5ème heure (free waiting time inclus) : 110€ / 30min<br>Chaque demi-heure entamée est due.</p></div></div></div>
+  </div>
+</div>
+
+<div class="calc">
+  <div class="calc-hd">
+    <div class="calc-ic">📐</div>
+    <div>
+      <div class="calc-t">Calculateur OOG / Dépassement</div>
+      <div class="calc-d">Saisir en centimètres · Largeur = divisée par 2 · Génère le texte cargo description</div>
+    </div>
+  </div>
+  <div class="calc-b">
+    <!-- Ligne 1 : type conteneur + gabarit dynamique -->
+    <div class="cg" style="margin-bottom:8px">
+      <div class="cf">
+        <label>Type conteneur</label>
+        <select id="d-tp" onchange="updateGabarit()">
+          <option value="ot20">Open Top 20'</option>
+          <option value="ot">Open Top 40'</option>
+          <option value="fr">Flat Rack</option>
+          <option value="frc">Flat Rack Collapsible</option>
+        </select>
+      </div>
+      <div class="cf" style="grid-column:span 2">
+        <label>Gabarit de référence</label>
+        <div id="d-gabarit" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--gold-dim);padding:8px 10px;background:var(--black2);border:1px solid var(--gray1);border-radius:2px;line-height:1.6">
+          L 1203 cm × l 235 cm × H Ouvert | Max 28 000 kg
+        </div>
+      </div>
+    </div>
+    <!-- Ligne 2 : dimensions marchandise -->
+    <div class="cg">
+      <div class="cf"><label>Longueur (cm)</label><input type="number" id="d-l" placeholder="ex: 1226" step="1"></div>
+      <div class="cf"><label>Largeur (cm)</label><input type="number" id="d-w" placeholder="ex: 258" step="1"></div>
+      <div class="cf"><label>Hauteur (cm)</label><input type="number" id="d-h" placeholder="ex: 347" step="1"></div>
+      <div class="cf"><label>Hauteur conteneur (cm)</label><input type="number" id="d-hc" placeholder="ex: 239" step="1"></div>
+      <div class="cf"><label>Poids brut (kg)</label><input type="number" id="d-p" placeholder="ex: 18500" step="1"></div>
+    </div>
+    <!-- Options -->
+    <div style="display:flex;gap:20px;margin:10px 0 14px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.8rem;color:var(--gray5)">
+        <input type="checkbox" id="d-tarp" style="accent-color:var(--gold);width:15px;height:15px"> Avec bâche (WITH TARPAULIN)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.8rem;color:var(--gray5)">
+        <input type="checkbox" id="d-anchor" style="accent-color:var(--gold);width:15px;height:15px"> Anneaux d'ancrage (ANCHOR RINGS)
+      </label>
+    </div>
+    <button class="cbtn2" onclick="calcD()">Calculer OOG</button>
+    <!-- Résultat -->
+    <div id="d-res" style="display:none;margin-top:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📦 Bloc 1 — Infos marchandise</div>
+          <div id="d-bloc1" class="cres" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;white-space:pre-wrap"></div>
+          <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-bloc1')">📋 Copier Bloc 1</button>
+        </div>
+        <div>
+          <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📐 Bloc 2 — Dépassement OOG</div>
+          <div id="d-bloc2" class="cres" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;white-space:pre-wrap"></div>
+          <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-bloc2')">📋 Copier Bloc 2</button>
+        </div>
+      </div>
+      <button class="cbtn2" style="margin-top:10px;font-size:.72rem;padding:6px 18px;background:var(--gray2);color:var(--white)" onclick="copyBlocAll()">📋 Copier les 2 blocs</button>
+      <!-- Cargo Description auto -->
+      <div style="margin-top:14px;border-top:1px solid var(--gray1);padding-top:10px">
+        <div style="font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px">📝 Cargo Description (copier dans Link)</div>
+        <div id="d-cargo" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--white2);line-height:1.9;background:var(--black2);border:1px solid var(--gray1);padding:8px 10px;border-radius:2px;white-space:pre-wrap"></div>
+        <button class="cbtn2" style="margin-top:8px;font-size:.72rem;padding:6px 14px" onclick="copyBloc('d-cargo')">📋 Copier Cargo Description</button>
+      </div>
+    </div>
+    <!-- Exemples OOG -->
+    <div style="margin-top:20px;border-top:1px solid var(--gray1);padding-top:14px">
+      <button onclick="toggleExemples()" style="font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray4);display:flex;align-items:center;gap:8px;cursor:pointer">
+        <span id="ex-arrow">▶</span> Exemples de référence OOG
+      </button>
+      <div id="ex-panel" style="display:none;margin-top:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">
+          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Open Top — Dépassement H</h4><p>Avec release</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">OPEN TOP
+SIN VICERA
+H 347 CM
+OVER DIMENSION 108 CM
+RELEASE : <a href="/cdn-cgi/l/email-protection#601412010609030f20130512100f12144e02091a"><span class="__cf_email__" data-cfemail="601412010609030f20130512100f12144e02091a">[email&#160;protected]</span></a></div></div></div>
+          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Flat Rack Collapsible</h4><p>Dépassement largeur</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">FLATRACK COLLAPSIBLE
+EBKG14965078
+W 11.5 CM EACH SIDE
+(23 CM / 2 = 11.5 CM)</div></div></div>
+          <div class="card"><div class="ch n"><div class="ci">📐</div><div class="ct"><h4>Open Top — Free Clause</h4><p>Avec bâche + anneaux</p></div></div><div class="cb"><div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gray5);line-height:1.9;background:var(--black2);padding:8px 10px;border-radius:2px;white-space:pre">OPEN TOP : FREE CLAUSE
+WITH TARPAULIN
+ANCHOR RINGS</div></div></div>
+        </div>
+        <div class="hb y" style="margin-top:12px"><div class="hb-ic">📋</div><div class="hb-tx"><h5>Procédure OOG — Rappel</h5><p>1. Renseigner les dimensions en cm (pas de clauses à mettre)<br>2. Renseigner le dépassement (W = divisé par 2 — un côté)<br>3. Renseigner les mêmes infos dans le booking (partie Dépassement)<br>4. Open Top sans dépassement H = FREE CLAUSE<br>5. Crochets d'arrimage = ANCHOR RINGS<br>6. Avec bâche = WITH TARPAULIN<br>7. Flat Rack Collapsible : mentionner COLLAPSIBLE + référence booking<br>8. Toujours mettre le RELEASE si fourni</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </div>
 </div></div>
