@@ -4,84 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>MSC · Sextant</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js">
-/* ════ Globe hover tooltip ════ */
-(function(){
-  function initGlobeTip(){
-    var tip=document.getElementById('globe-tip');
-    var svg=document.querySelector('svg');
-    if(!tip||!svg||svg._tipInited) return;
-    if(!window.ISO_NUM||!window.MSC_SET) return;
-    svg._tipInited=true;
-    svg.addEventListener('mousemove',function(e){
-      var el=document.elementFromPoint(e.clientX,e.clientY);
-      if(!el||el.tagName!=='path'){tip.style.opacity='0';return;}
-      var d=el.__data__;
-      if(!d){tip.style.opacity='0';return;}
-      var iso=window.ISO_NUM[String(d.id)];
-      if(!iso||!window.MSC_SET.has(iso)){tip.style.opacity='0';return;}
-      var info=window.C&&window.C[iso];
-      if(!info){tip.style.opacity='0';return;}
-      var svgBox=svg.parentElement.getBoundingClientRect();
-      tip.textContent=(info.flag||'')+' '+info.name;
-      tip.style.left=(e.clientX-svgBox.left)+'px';
-      tip.style.top=(e.clientY-svgBox.top-14)+'px';
-      tip.style.opacity='1';
-    });
-    svg.addEventListener('mouseleave',function(){tip.style.opacity='0';});
-  }
-  window.addEventListener('load',function(){setTimeout(initGlobeTip,500);});
-  var origShowPage=window.showPage;
-  if(typeof origShowPage==='function') window.showPage=function(){
-    origShowPage.apply(this,arguments);
-    setTimeout(initGlobeTip,400);
-  };
-})();
-
-/* ════ Globe zoom v3 – animated + deep ════ */
-/* Globe zoom v3 - animated 10x zoom */
-(function(){
-  var _zTid=null,_zSh=null;
-  function gz(f,d){
-    if(_zTid){cancelAnimationFrame(_zTid);_zTid=null;}
-    var n=Math.max(1,Math.round((d||400)/16));
-    var q=Math.pow(Math.max(0.0001,f),1/n);
-    var s=0;
-    (function step(){
-      if(s>=n){_zTid=null;return;}
-      window.globeZoom(q);s++;
-      _zTid=requestAnimationFrame(step);
-    })();
-  }
-  function zIn(){gz(10,500);}
-  function zOut(){
-    var f=(window._globeBaseR&&window._globeR&&window._globeR>1)?(window._globeBaseR/window._globeR):0.1;
-    gz(f,350);
-  }
-  function init(){
-    var sc=window.showCountry;
-    if(!sc||sc._enh)return;
-    window.showCountry=function(iso){
-      var r=sc.apply(this,arguments);
-      if(iso){clearTimeout(_zSh);_zSh=setTimeout(zIn,150);}
-      return r;
-    };
-    window.showCountry._enh=true;
-    var gt=window.globeGoTo;
-    if(gt&&!gt._enh){
-      window.globeGoTo=function(iso){
-        clearTimeout(_zSh);
-        window._globeNavLock=true;
-        setTimeout(function(){window._globeNavLock=false;},1200);
-        zOut();setTimeout(zIn,900);
-        return gt.apply(this,arguments);
-      };
-      window.globeGoTo._enh=true;
-    }
-  }
-  window.addEventListener("load",function(){setTimeout(init,800);});
-  setTimeout(init,2500);
-})();</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -7779,6 +7702,87 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 
 /* ── GradientText on portal titles ── */
 (function(){document.querySelectorAll('h1,h2').forEach(function(el){if(!el.closest('.guide-section')&&!el.closest('.ab-feat')&&!el.closest('#nav-bar')&&!el.closest('.modal'))el.classList.add('gt-el');});})();
+</script>
+<script>
+/* ════ Globe hover tooltip ════ */
+(function(){
+  function initGlobeTip(){
+    var tip=document.getElementById('globe-tip');
+    var svg=document.querySelector('svg');
+    if(!tip||!svg||svg._tipInited) return;
+    if(!window.ISO_NUM||!window.MSC_SET) return;
+    svg._tipInited=true;
+    svg.addEventListener('mousemove',function(e){
+      var el=document.elementFromPoint(e.clientX,e.clientY);
+      if(!el||el.tagName!=='path'){tip.style.opacity='0';return;}
+      var d=el.__data__;
+      if(!d){tip.style.opacity='0';return;}
+      var iso=window.ISO_NUM[String(d.id)];
+      if(!iso||!window.MSC_SET.has(iso)){tip.style.opacity='0';return;}
+      var info=window.C&&window.C[iso];
+      if(!info){tip.style.opacity='0';return;}
+      var svgBox=svg.parentElement.getBoundingClientRect();
+      tip.textContent=(info.flag||'')+' '+info.name;
+      tip.style.left=(e.clientX-svgBox.left)+'px';
+      tip.style.top=(e.clientY-svgBox.top-14)+'px';
+      tip.style.opacity='1';
+    });
+    svg.addEventListener('mouseleave',function(){tip.style.opacity='0';});
+  }
+  window.addEventListener('load',function(){setTimeout(initGlobeTip,500);});
+  var origShowPage=window.showPage;
+  if(typeof origShowPage==='function') window.showPage=function(){
+    origShowPage.apply(this,arguments);
+    setTimeout(initGlobeTip,400);
+  };
+})();
+
+/* ════ Globe zoom v3 – animated + deep ════ */
+</script>
+<script>
+/* Globe zoom v3 - animated 10x zoom */
+(function(){
+  var _zTid=null,_zSh=null;
+  function gz(f,d){
+    if(_zTid){cancelAnimationFrame(_zTid);_zTid=null;}
+    var n=Math.max(1,Math.round((d||400)/16));
+    var q=Math.pow(Math.max(0.0001,f),1/n);
+    var s=0;
+    (function step(){
+      if(s>=n){_zTid=null;return;}
+      window.globeZoom(q);s++;
+      _zTid=requestAnimationFrame(step);
+    })();
+  }
+  function zIn(){gz(10,500);}
+  function zOut(){
+    var f=(window._globeBaseR&&window._globeR&&window._globeR>1)?(window._globeBaseR/window._globeR):0.1;
+    gz(f,350);
+  }
+  function init(){
+    var sc=window.showCountry;
+    if(!sc||sc._enh)return;
+    window.showCountry=function(iso){
+      var r=sc.apply(this,arguments);
+      if(iso){clearTimeout(_zSh);_zSh=setTimeout(zIn,150);}
+      return r;
+    };
+    window.showCountry._enh=true;
+    var gt=window.globeGoTo;
+    if(gt&&!gt._enh){
+      window.globeGoTo=function(iso){
+        clearTimeout(_zSh);
+        window._globeNavLock=true;
+        setTimeout(function(){window._globeNavLock=false;},1200);
+        zOut();setTimeout(zIn,900);
+        return gt.apply(this,arguments);
+      };
+      window.globeGoTo._enh=true;
+    }
+  }
+  window.addEventListener("load",function(){setTimeout(init,500);});
+  setTimeout(init,1500);
+})();
 </script>
 <div id="globe-tip"></div></body>
 </html>
