@@ -7740,31 +7740,33 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 /* ════ Globe zoom v3 – animated + deep ════ */
 </script>
 <script>
-/* Globe zoom v3 - animated 10x zoom */
+/* Globe zoom v4 - smooth absolute zoom with easing */
 (function(){
-  var _zTid=null,_zSh=null;
-  function gz(f,d){
-    if(_zTid){cancelAnimationFrame(_zTid);_zTid=null;}
-    var n=Math.max(1,Math.round((d||400)/16));
-    var q=Math.pow(Math.max(0.0001,f),1/n);
-    var s=0;
-    (function step(){
-      if(s>=n){_zTid=null;return;}
-      window.globeZoom(q);s++;
-      _zTid=requestAnimationFrame(step);
-    })();
+  var _tid=null, _zSh=null;
+  function gzTo(absR, dur){
+    if(_tid){cancelAnimationFrame(_tid);_tid=null;}
+    var sR = window._globeR || window._globeBaseR || 330;
+    var tR = Math.max(110, Math.min(8000, absR));
+    var t0 = performance.now(), d = dur||500;
+    (function step(now){
+      var t = Math.min(1,(now-t0)/d);
+      var e = 1-Math.pow(1-t,3);
+      var iR = sR+(tR-sR)*e;
+      var cur = window._globeR || sR;
+      if(cur>0) window.globeZoom(iR/cur);
+      if(t<1) _tid=requestAnimationFrame(step);
+      else _tid=null;
+    })(performance.now());
   }
-  function zIn(){gz(10,500);}
-  function zOut(){
-    var f=(window._globeBaseR&&window._globeR&&window._globeR>1)?(window._globeBaseR/window._globeR):0.1;
-    gz(f,350);
-  }
+  function zIn(){ if(window._globeBaseR) gzTo(window._globeBaseR*8, 550); }
+  function zOut(){ if(window._globeBaseR) gzTo(window._globeBaseR, 400); }
   function init(){
     var sc=window.showCountry;
     if(!sc||sc._enh)return;
     window.showCountry=function(iso){
       var r=sc.apply(this,arguments);
-      if(iso){clearTimeout(_zSh);_zSh=setTimeout(zIn,150);}
+      if(iso){clearTimeout(_zSh);_zSh=setTimeout(zIn,100);}
+      else{clearTimeout(_zSh);zOut();}
       return r;
     };
     window.showCountry._enh=true;
@@ -7774,7 +7776,8 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
         clearTimeout(_zSh);
         window._globeNavLock=true;
         setTimeout(function(){window._globeNavLock=false;},1200);
-        zOut();setTimeout(zIn,900);
+        zOut();
+        _zSh=setTimeout(zIn,750);
         return gt.apply(this,arguments);
       };
       window.globeGoTo._enh=true;
