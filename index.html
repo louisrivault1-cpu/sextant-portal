@@ -7745,9 +7745,10 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 /* ════ Globe zoom v3 – animated + deep ════ */
 </script>
 <script>
-/* Globe zoom v7 - label fix in redrawPorts */
+/* Globe zoom v8 - zoom-in via setTimeout after fly */
 (function(){
-  var _tid=null;
+  var _tid=null, _zoomTid=null;
+
   function gzTo(absR,dur){
     if(_tid){cancelAnimationFrame(_tid);_tid=null;}
     var sR=window._globeR||window._globeBaseR||330;
@@ -7789,13 +7790,18 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 
   function patchRedrawPorts(){
     var orig=window.redrawPorts;
-    if(!orig||orig._v7)return false;
+    if(!orig||orig._v7)return;
     window.redrawPorts=function(){
       orig.apply(this,arguments);
       fixLabels();
     };
     window.redrawPorts._v7=true;
-    return true;
+  }
+
+  function doZoomIn(){
+    var bR=window._globeBaseR||330;
+    window._globeNavLock=true;
+    gzTo(bR*8, 450);
   }
 
   function init(){
@@ -7804,16 +7810,19 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
     patchRedrawPorts();
     window.globeGoTo=function(iso){
       if(_tid){cancelAnimationFrame(_tid);_tid=null;}
+      if(_zoomTid){clearTimeout(_zoomTid);_zoomTid=null;}
       var cR=window._globeR||window._globeBaseR||330;
       var bR=window._globeBaseR||330;
       if(cR>bR*1.5)gzTo(bR,250);
       window._globeNavLock=true;
-      return gt.apply(this,arguments);
+      gt.apply(this,arguments);
+      _zoomTid=setTimeout(doZoomIn, 750);
     };
     window.globeGoTo._v6=true;
     var closeBtn=document.querySelector('.panel-close,.close-btn,[data-action="close"]');
     if(closeBtn){
       closeBtn.addEventListener('click',function(){
+        if(_zoomTid){clearTimeout(_zoomTid);_zoomTid=null;}
         gzTo(window._globeBaseR||330,350);
         setTimeout(function(){window._globeNavLock=false;},400);
       });
