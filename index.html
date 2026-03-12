@@ -7745,11 +7745,9 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 /* ════ Globe zoom v3 – animated + deep ════ */
 </script>
 <script>
-/* Globe zoom v6 - zoom-out avant vol + fix labels */
+/* Globe zoom v7 - label fix in redrawPorts */
 (function(){
   var _tid=null;
-
-  /* zoom vers valeur absolue */
   function gzTo(absR,dur){
     if(_tid){cancelAnimationFrame(_tid);_tid=null;}
     var sR=window._globeR||window._globeBaseR||330;
@@ -7768,45 +7766,51 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
   }
   window._gzTo=gzTo;
 
-  /* anti-chevauchement des labels */
   function fixLabels(){
-    var els=document.querySelectorAll('text.port-name');
+    var els=Array.from(document.querySelectorAll('text.port-name'));
     if(els.length<2)return;
     var placed=[];
     els.forEach(function(el){
       var x=parseFloat(el.getAttribute('x'));
       var y=parseFloat(el.getAttribute('y'));
       var w=el.textContent.length*5.5;
-      for(var i=0;i<10;i++){
+      var h=12;
+      for(var i=0;i<8;i++){
         var ok=!placed.some(function(p){
-          return Math.abs(x-p.cx)<(w+p.w)/2+8&&Math.abs(y-p.y)<14;
+          return Math.abs(x-p.cx)<(w+p.w)/2+4&&Math.abs(y-p.y)<h+2;
         });
         if(ok)break;
-        y+=14;
+        y+=h+2;
       }
       el.setAttribute('y',y);
       placed.push({cx:x+w/2,y:y,w:w});
     });
   }
 
+  function patchRedrawPorts(){
+    var orig=window.redrawPorts;
+    if(!orig||orig._v7)return false;
+    window.redrawPorts=function(){
+      orig.apply(this,arguments);
+      fixLabels();
+    };
+    window.redrawPorts._v7=true;
+    return true;
+  }
+
   function init(){
     var gt=window.globeGoTo;
     if(!gt||gt._v6)return;
+    patchRedrawPorts();
     window.globeGoTo=function(iso){
       if(_tid){cancelAnimationFrame(_tid);_tid=null;}
-      /* zoom-out rapide avant le vol si on est zoomé */
       var cR=window._globeR||window._globeBaseR||330;
       var bR=window._globeBaseR||330;
-      if(cR>bR*1.5) gzTo(bR,250);
+      if(cR>bR*1.5)gzTo(bR,250);
       window._globeNavLock=true;
-      var res=gt.apply(this,arguments);
-      /* fixer les labels 500ms après (après fin du vol ~700ms non, fix labels après zoom-in ~1200ms) */
-      setTimeout(fixLabels,1200);
-      return res;
+      return gt.apply(this,arguments);
     };
     window.globeGoTo._v6=true;
-
-    /* Détecter la fermeture du panneau pays pour zoom-out */
     var closeBtn=document.querySelector('.panel-close,.close-btn,[data-action="close"]');
     if(closeBtn){
       closeBtn.addEventListener('click',function(){
@@ -7815,7 +7819,6 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
       });
     }
   }
-
   window.addEventListener('load',function(){setTimeout(init,500);});
   setTimeout(init,1500);
 })();
