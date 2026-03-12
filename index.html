@@ -5821,7 +5821,12 @@ function globeGoTo(iso){
     proj.rotate(interp(ease));
     if(_globeRedraw)_globeRedraw(currentSel);
     if(t<1){requestAnimationFrame(animRot);}
-    else{animating=false;}
+    else{
+      animating=false;
+      redrawPorts(currentSel);
+      window._globeNavLock=true;
+      (function(){var _sR=R,_tR=Math.min(Math.min(W,H)*8,(window._globeBaseR||R)*8),_t0=performance.now();(function _zi(now){var t=Math.min(1,(now-_t0)/450),e=1-Math.pow(1-t,3),iR=_sR+(_tR-_sR)*e;globeZoom(iR/R);if(t<1)requestAnimationFrame(_zi);})(performance.now());})();
+    }
   }
   requestAnimationFrame(animRot);
 }
@@ -7740,17 +7745,17 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
 /* ════ Globe zoom v3 – animated + deep ════ */
 </script>
 <script>
-/* Globe zoom v5 + label fix */
+/* Globe zoom v6 - zoom-out avant vol + fix labels */
 (function(){
-  var _tid=null,_zSh=null;
+  var _tid=null;
 
-  /* zoom vers valeur absolue avec easing cubic */
+  /* zoom vers valeur absolue */
   function gzTo(absR,dur){
     if(_tid){cancelAnimationFrame(_tid);_tid=null;}
     var sR=window._globeR||window._globeBaseR||330;
     var tR=Math.max(110,Math.min(8000,absR));
-    if(Math.abs(tR-sR)<1)return;
-    var t0=performance.now(),d=dur||450;
+    if(Math.abs(tR-sR)<2)return;
+    var t0=performance.now(),d=dur||350;
     (function step(now){
       var t=Math.min(1,(now-t0)/d);
       var e=1-Math.pow(1-t,3);
@@ -7761,22 +7766,9 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
       else _tid=null;
     })(performance.now());
   }
+  window._gzTo=gzTo;
 
-  /* zoom in : stoppe la rotation ET agrandit */
-  function zIn(){
-    window._globeNavLock=true;
-    if(!window._globeBaseR)return;
-    gzTo(window._globeBaseR*8,450);
-  }
-
-  /* zoom out : redonne le rayon de base et déverrouille */
-  function zOut(){
-    if(!window._globeBaseR)return;
-    gzTo(window._globeBaseR,300);
-    setTimeout(function(){window._globeNavLock=false;},320);
-  }
-
-  /* anti-chevauchement des labels de ports */
+  /* anti-chevauchement des labels */
   function fixLabels(){
     var els=document.querySelectorAll('text.port-name');
     if(els.length<2)return;
@@ -7798,35 +7790,29 @@ destroy(){this._io.disconnect();if(this._kh)window.removeEventListener('keydown'
   }
 
   function init(){
-    var sc=window.showCountry;
-    if(!sc||sc._enh)return;
-
-    window.showCountry=function(iso){
-      var r=sc.apply(this,arguments);
-      clearTimeout(_zSh);
-      if(iso){
-        window._globeNavLock=true;
-        _zSh=setTimeout(function(){zIn();setTimeout(fixLabels,100);},80);
-      }else{
-        zOut();
-      }
-      return r;
-    };
-    window.showCountry._enh=true;
-
     var gt=window.globeGoTo;
-    if(gt&&!gt._enh){
-      window.globeGoTo=function(iso){
-        clearTimeout(_zSh);
-        if(_tid){cancelAnimationFrame(_tid);_tid=null;}
-        window._globeNavLock=true;
-        var cR=window._globeR||window._globeBaseR||330;
-        var bR=window._globeBaseR||330;
-        if(cR>bR*1.5)gzTo(bR,280);
-        _zSh=setTimeout(function(){zIn();setTimeout(fixLabels,100);},680);
-        return gt.apply(this,arguments);
-      };
-      window.globeGoTo._enh=true;
+    if(!gt||gt._v6)return;
+    window.globeGoTo=function(iso){
+      if(_tid){cancelAnimationFrame(_tid);_tid=null;}
+      /* zoom-out rapide avant le vol si on est zoomé */
+      var cR=window._globeR||window._globeBaseR||330;
+      var bR=window._globeBaseR||330;
+      if(cR>bR*1.5) gzTo(bR,250);
+      window._globeNavLock=true;
+      var res=gt.apply(this,arguments);
+      /* fixer les labels 500ms après (après fin du vol ~700ms non, fix labels après zoom-in ~1200ms) */
+      setTimeout(fixLabels,1200);
+      return res;
+    };
+    window.globeGoTo._v6=true;
+
+    /* Détecter la fermeture du panneau pays pour zoom-out */
+    var closeBtn=document.querySelector('.panel-close,.close-btn,[data-action="close"]');
+    if(closeBtn){
+      closeBtn.addEventListener('click',function(){
+        gzTo(window._globeBaseR||330,350);
+        setTimeout(function(){window._globeNavLock=false;},400);
+      });
     }
   }
 
