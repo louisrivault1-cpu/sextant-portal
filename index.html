@@ -518,6 +518,8 @@ a:hover{text-decoration-thickness:1px;text-underline-offset:3px}
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.06) inset;
 }
+#globe-tip .tip-grad{background:linear-gradient(90deg,#e8c840,#f5e878,#5090d0,#a8d0f0,#e8c840);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mscGrad 4s linear infinite;}
+@keyframes mscGrad{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 #globe-tip[style*="opacity: 1"],#globe-tip[style*="opacity:1"]{transform:translateY(0)}
 .globe-leg{
   position:absolute;bottom:14px;left:14px;
@@ -4437,6 +4439,8 @@ const PORTS=[
  {iso:"SVN",name:"Koper",lon:13.73,lat:45.55},
  {iso:"LVA",name:"Riga",lon:24.06,lat:56.95},
  {iso:"HUN",name:"Budapest",lon:19.04,lat:47.50},
+{iso:"CHE",name:"Genève",lon:6.14,lat:46.20},
+{iso:"CHE",name:"Basel",lon:7.59,lat:47.56},
 ];
 
 // Centroïdes forcés — évite DOM-TOM / îles éloignées
@@ -4768,6 +4772,7 @@ function renderSection(iso,idx){
 function showCountry(iso){
   const d=C[iso];if(!d)return;
   currentIso=iso;
+  currentSel=iso;
   // Globe highlight + flash
   d3.selectAll('.land-msc').classed('land-sel',false).classed('land-sel-anim',false);
   d3.selectAll(`[data-iso="${iso}"]`).classed('land-sel',true).classed('land-sel-anim',true);
@@ -5762,6 +5767,8 @@ const gratG=svg.append('g');
 const landG=svg.append('g');
 const portG=svg.append('g');
 const labelG=svg.append('g');
+const cLabelG=svg.append('g');
+let featureMap={};
 
 gratG.append('path').datum(d3.geoGraticule()()).attr('class','graticule').attr('d',gpath);
 
@@ -5774,25 +5781,10 @@ function isVisible(lon,lat){
 }
 
 function redrawPorts(selIso){
-  portG.selectAll('*').remove();
-  labelG.selectAll('*').remove();
-  if(!selIso)return;
-  PORTS.forEach(p=>{
-    if(p.iso!==selIso)return;
-    const pt=proj([p.lon,p.lat]);
-    if(!pt||!isVisible(p.lon,p.lat))return;
-    const[x,y]=pt;
-    portG.append('circle').attr('class','port-ring').attr('cx',x).attr('cy',y).attr('r',10);
-    portG.append('circle').attr('class','port-dot')
-      .attr('cx',x).attr('cy',y).attr('r',5)
-      .style('fill','#ff7733')
-      .on('click',()=>showCountry(p.iso))
-      .on('mouseenter',()=>{tip.textContent='⚠️ '+p.name+' — '+(C[p.iso]?C[p.iso].name:'');tip.style.opacity='1';})
-      .on('mouseleave',()=>tip.style.opacity='0');
-    labelG.append('text').attr('class','port-name')
-      .attr('x',x+6).attr('y',y-4).text(p.name)
-      .style('fill','#ffc080').style('font-size','9px');
-  });
+  var vis=PORTS.reduce(function(acc,p){var pt=proj([p.lon,p.lat]);if(pt&&isVisible(p.lon,p.lat))acc.push({p:p,x:pt[0],y:pt[1]});return acc;},[]);
+  portG.selectAll('.port-ring').data(vis.filter(function(v){return v.p.iso===selIso;}),function(v){return v.p.iso+v.p.name;}).join('circle').attr('class','port-ring').attr('cx',function(v){return v.x;}).attr('cy',function(v){return v.y;}).attr('r',9);
+  portG.selectAll('.port-dot').data(vis,function(v){return v.p.iso+v.p.name;}).join(function(enter){return enter.append('circle').attr('class','port-dot').on('click',function(e,v){showCountry(v.p.iso);}).on('mouseenter',function(e,v){tip.innerHTML='<span class="tip-grad">\u2693 '+v.p.name+' \u2014 '+C[v.p.iso].name+'</span>';tip.style.opacity='1';}).on('mouseleave',function(){tip.style.opacity='0';});},function(update){return update;},function(exit){return exit.remove();}).attr('cx',function(v){return v.x;}).attr('cy',function(v){return v.y;}).attr('r',function(v){return v.p.iso===selIso?5:3.5;}).style('fill',function(v){return v.p.iso===selIso?'#ff7733':'#d4920a';});
+  labelG.selectAll('.port-name').data(vis,function(v){return v.p.iso+v.p.name;}).join('text').attr('class','port-name').attr('x',function(v){return v.x+6;}).attr('y',function(v){return v.y-4;}).text(function(v){return v.p.name;}).style('fill',function(v){return v.p.iso===selIso?'#ffc080':'#f5c84a';}).style('font-size',function(v){return v.p.iso===selIso?'9px':'7.5px';});
 }
 
 let currentSel=null;
@@ -5806,7 +5798,7 @@ let _globeAutoOn=null; // setter pour autoOn depuis l'extérieur du .then()
 function globeGoTo(iso){
   if(!iso)return;
   const feat=window._globeWorld?topojson.feature(window._globeWorld,window._globeWorld.objects.countries).features.find(f=>ISO_NUM[String(f.id)]===iso):null;
-  const centroid=feat?d3.geoCentroid(feat):null;
+  const centroid=FORCED_CENTROIDS[iso]||(feat?d3.geoCentroid(feat):null);
   if(!centroid)return;
   currentSel=iso;
   if(_globeAutoOn)_globeAutoOn(false); // suspend auto-rotation
@@ -5844,6 +5836,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
   .then(world=>{
     window._globeWorld=world; // expose pour globeGoTo
     const countries=topojson.feature(world,world.objects.countries);
+countries.features.forEach(function(ft){var iso=ISO_NUM[String(ft.id)];if(iso)featureMap[iso]=ft;});
     const paths=landG.selectAll('path')
       .data(countries.features)
       .join('path')
@@ -5856,7 +5849,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .on('mouseenter',function(e,d){
         const iso=ISO_NUM[String(d.id)];
         if(!iso||!MSC_SET.has(iso))return;
-        tip.textContent=C[iso].flag+' '+C[iso].name+' — Cliquer pour contacts';
+        tip.innerHTML='<span class="tip-grad">'+C[iso].flag+' '+C[iso].name+' \u2014 Cliquer pour contacts</span>';
         tip.style.opacity='1';
       })
       .on('mousemove',function(e){
@@ -5874,7 +5867,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         d3.selectAll('.land-msc').classed('land-sel',false);
         d3.select(this).classed('land-sel',true);
         // Animation de rotation vers le centroide - auto-rotation suspendue
-        const centroid=d3.geoCentroid(d);
+        const centroid=FORCED_CENTROIDS[iso]||d3.geoCentroid(d);
         const cur=proj.rotate();
         const target=[-centroid[0],-centroid[1],cur[2]];
         const interp=d3.interpolate(cur,target);
