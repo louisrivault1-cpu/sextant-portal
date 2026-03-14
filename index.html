@@ -518,8 +518,6 @@ a:hover{text-decoration-thickness:1px;text-underline-offset:3px}
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.06) inset;
 }
-#globe-tip .tip-grad{background:linear-gradient(90deg,#e8c840,#f5e878,#5090d0,#a8d0f0,#e8c840);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mscGrad 4s linear infinite;}
-@keyframes mscGrad{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 #globe-tip[style*="opacity: 1"],#globe-tip[style*="opacity:1"]{transform:translateY(0)}
 .globe-leg{
   position:absolute;bottom:14px;left:14px;
@@ -1613,6 +1611,7 @@ button:active{transform:scale(.97);transition:transform .15s}
 .composer-toolbar{display:none;flex-wrap:wrap;gap:8px;margin:12px 0;animation:toolbarSlideIn .3s var(--ease-spring) both;animation-fill-mode:both;will-change:opacity,transform}
 .composer-actions{display:none;gap:8px;align-items:center;margin-top:12px}
 .news-composer:focus-within .composer-toolbar,.news-composer:focus-within .composer-actions{display:flex}
+.news-composer.authorized .composer-toolbar,.news-composer.authorized .composer-actions{display:flex}
 @keyframes toolbarSlideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .composer-format-btns{display:flex;gap:2px}
 .composer-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--gray2);border-radius:3px;color:var(--gray4);font-size:.75rem;cursor:pointer;transition:all .15s;will-change:transform;font-weight:600}
@@ -2580,11 +2579,6 @@ function forgotStep2(){
       <div class="gl"><div class="gl-dot"></div>Port (cliquable)</div>
     </div>
     <div class="globe-hint">cliquer · glisser · molette</div>
-    <div class="globe-zoom-ctrl" id="globe-zoom-ctrl">
-      <button onclick="globeZoom(1.25)" title="Zoom +">+</button>
-      <div class="gz-sep"></div>
-      <button onclick="globeZoom(0.8)" title="Zoom −">−</button>
-    </div>
   </div>
   <div id="cpanel">
     <button onclick="closePanel()" style="position:absolute;top:6px;right:8px;z-index:10;font-size:1rem;color:var(--gray4);background:none;border:none;cursor:pointer;padding:4px 8px;line-height:1" title="Fermer">✕</button>
@@ -3395,14 +3389,13 @@ ANCHOR RINGS</div></div></div>
 <!-- ════ PAGE RESSOURCES ════ -->
 <div id="pg-links" class="page">
 <div class="hero">
-  <div><h2>Ressources & <em>Liens</em></h2><p>Adresses internes · Commerciaux · Quick Links · Procédures · Réassignations</p></div>
+  <div><h2>Ressources & <em>Liens</em></h2><p>Adresses internes · Commerciaux · Quick Links · Procédures</p></div>
 </div>
 <div class="ptabs">
   <button class="ptab on" onclick="ptab(this,'lk-mails')">📧 Mails Internes</button>
   <button class="ptab" onclick="ptab(this,'lk-comm')">💼 Commerciaux</button>
   <button class="ptab" onclick="ptab(this,'lk-medlog')">🚛 MEDLOG</button>
   <button class="ptab" onclick="ptab(this,'lk-links')">🔗 Quick Links</button>
-  <button class="ptab" onclick="ptab(this,'lk-reass')">🔄 Réassignations</button>
 </div>
 <div class="inner"><div class="wrap" style="padding-top:16px">
 
@@ -3488,16 +3481,6 @@ ANCHOR RINGS</div></div></div>
   </div>
 </div>
 
-<div id="lk-reass" class="ptpane">
-  <div class="hb y"><div class="hb-ic">🔄</div><div class="hb-tx"><h5>Réassignations sous ECHO</h5><p>Comment réassigner un booking selon son type et son POL</p></div></div>
-  <table class="tbl">
-    <tr><th>Type de booking</th><th>Le réassigner à</th></tr>
-    <tr><td>Booking agent MSC (Germany, Netherlands, Sweden, Denmark, Italy, Spain, Basel) — POL France</td><td><span class="tag y">Category "Xbooking POL France"</span></td></tr>
-    <tr><td>Booking dry Merchant — POL Anvers</td><td><span class="tag y">Category "POL Anvers"</span></td></tr>
-    <tr><td>Booking carrier — POL Anvers</td><td><span class="tag b">Group "Xbooking/Xtrade"</span></td></tr>
-    <tr><td>Booking Reefer Merchant — POL Anvers</td><td><span class="tag g">Group "Reefer"</span></td></tr>
-  </table>
-</div>
 
 </div></div>
 </div>
@@ -3675,7 +3658,7 @@ ANCHOR RINGS</div></div></div>
     <div class="ab-video-card">
       <div class="ab-video-label">▶&nbsp;&nbsp;Présentation du projet</div>
       <div class="ab-video-wrap">
-        <video controls preload="metadata">
+        <video controls preload="auto" playsinline>
           <source src="sextant.mp4" type="video/mp4">
         </video>
       </div>
@@ -4439,8 +4422,7 @@ const PORTS=[
  {iso:"SVN",name:"Koper",lon:13.73,lat:45.55},
  {iso:"LVA",name:"Riga",lon:24.06,lat:56.95},
  {iso:"HUN",name:"Budapest",lon:19.04,lat:47.50},
-{iso:"CHE",name:"Genève",lon:6.14,lat:46.20},
-{iso:"CHE",name:"Basel",lon:7.59,lat:47.56},
+ {iso:"CHE",name:"Genève",lon:6.14,lat:46.20},
 ];
 
 // Centroïdes forcés — évite DOM-TOM / îles éloignées
@@ -5734,232 +5716,302 @@ function sendBudapest(){
   window.open(mailto);
 }
 
-// ═══════════════════════════════════════════════
-//  GLOBE 3D — D3 + TopoJSON — v2 FLUID FIX
-//  Fixes : rotation douce sans saccade, pays stables,
-//  labels immédiats, auto-rotation suspendue pendant animation
-// ═══════════════════════════════════════════════
+// ═══ GLOBE D3 ═══
 const svg=d3.select('#globe-svg');
 const gArea=document.getElementById('globe-area');
 let W=gArea.clientWidth,H=gArea.clientHeight;
-let R=Math.min(W,H)*.43;
+let R=Math.min(W,H)*.72;
+const featureMap={};
 
 const proj=d3.geoOrthographic()
   .scale(R).translate([W/2,H/2])
-  .clipAngle(90).rotate([-10,-46,0]);
+  .clipAngle(90).rotate([-12,-48,0]);
 const gpath=d3.geoPath().projection(proj);
-
-// Stars (positions fixes, jamais redessinées)
-const sg=svg.append('g');
-for(let i=0;i<200;i++){
-  sg.append('circle').attr('class','star-pt')
-    .attr('cx',Math.random()*W).attr('cy',Math.random()*H)
-    .attr('r',Math.random()*1.0+.2)
-    .attr('opacity',Math.random()*.5+.1);
-}
-
-// Globe base circles
-const sphereEl=svg.append('circle').attr('class','globe-sphere').attr('cx',W/2).attr('cy',H/2).attr('r',R);
-const glowEl=svg.append('circle').attr('class','globe-glow').attr('cx',W/2).attr('cy',H/2).attr('r',R);
-const borderEl=svg.append('circle').attr('class','globe-border').attr('cx',W/2).attr('cy',H/2).attr('r',R);
-
-const gratG=svg.append('g');
-const landG=svg.append('g');
-const portG=svg.append('g');
-const labelG=svg.append('g');
-const cLabelG=svg.append('g');
-let featureMap={};
-
-gratG.append('path').datum(d3.geoGraticule()()).attr('class','graticule').attr('d',gpath);
-
 const tip=document.getElementById('globe-tip');
 
-// Helpers
-function isVisible(lon,lat){
-  const dist=d3.geoDistance([lon,lat],proj.invert([W/2,H/2]));
-  return dist<Math.PI/2-.01;
+// Stars background with twinkle
+const sg=svg.append('g');
+for(let i=0;i<200;i++){
+  const star=sg.append('circle').attr('class','star-pt')
+    .attr('cx',Math.random()*2000).attr('cy',Math.random()*1200)
+    .attr('r',Math.random()*.9+.15)
+    .attr('opacity',Math.random()*.4+.12);
+  if(Math.random()>.6){
+    star.style('animation','starTwinkle '+(2+Math.random()*4).toFixed(1)+'s ease-in-out '+(Math.random()*3).toFixed(1)+'s infinite');
+  }
 }
+const sphereEl=svg.append('circle').attr('class','globe-sphere');
+const glowEl  =svg.append('circle').attr('class','globe-glow');
+const borderEl=svg.append('circle').attr('class','globe-border');
+const gratG   =svg.append('g');
+const landG   =svg.append('g');
+const portG   =svg.append('g');
+const labelG  =svg.append('g'); // port labels
+const cLabelG =svg.append('g'); // country labels
+
+function upSize(){[sphereEl,glowEl,borderEl].forEach(e=>e.attr('cx',W/2).attr('cy',H/2).attr('r',R));}
+upSize();
+gratG.append('path').datum(d3.geoGraticule()()).attr('class','graticule').attr('d',gpath);
+
+function isVis(lon,lat){return d3.geoDistance([lon,lat],proj.invert([W/2,H/2]))<Math.PI/2-.01;}
+
+function globeGoTo(iso){
+  const fc=FORCED_CENTROIDS[iso];
+  const feat=featureMap[iso];
+  const c=fc||(feat?d3.geoCentroid(feat):null);
+  if(!c)return;
+  // Clear old ports/labels immediately for clean transition
+  portG.selectAll('*').remove();
+  labelG.selectAll('*').remove();
+  cLabelG.selectAll('*').remove();
+  // Zoom per country size
+  const ZOOM_SCALES={
+    FRA:1.9, ESP:1.8, DEU:2.3, ITA:2.1, POL:2.2, TUR:1.5, GBR:2.6, SWE:1.4,
+    NLD:3.8, BEL:4.2, DNK:3.2, PRT:3.0, IRL:3.2, GRC:2.8, CHE:4.2, HUN:3.4,
+    HRV:3.8, CZE:3.6, ROU:2.6, SVN:4.8, LVA:3.2, LTU:3.4, EST:3.2
+  };
+  const zoomFactor=ZOOM_SCALES[iso]||2.0;
+  const cur=proj.rotate();
+  const curR=R;
+  const targetR=Math.min(W,H)*zoomFactor;
+  // Panel is ~380px on right. Offset the center proportionally to zoom level
+  // More zoom = country is bigger = less offset needed
+  const panelOffset=Math.max(2,12/zoomFactor);
+  const target=[-c[0]+panelOffset,-c[1],0];
+  const interpRot=d3.interpolate(cur,target);
+  const interpScale=d3.interpolateNumber(curR,targetR);
+  const dur=1600;let t0=0;
+  function anim(ts){
+    if(!t0)t0=ts;const t=Math.min(1,(ts-t0)/dur);
+    const e=(1-Math.cos(t*Math.PI))/2;
+    proj.rotate(interpRot(e));
+    R=interpScale(e);
+    proj.scale(R);
+    [sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
+    redraw(currentIso,t<.95);
+    if(t<1)requestAnimationFrame(anim);
+    else redraw(currentIso);
+  };requestAnimationFrame(anim);
+}
+
+// Reset globe zoom — double click
+d3.select('#globe-area').on('dblclick',function(){
+  const curR=R;const targetR=Math.min(W,H)*.72;
+  const cur=proj.rotate();const target=[-12,-48,0];
+  const interpRot=d3.interpolate(cur,target);
+  const interpScale=d3.interpolateNumber(curR,targetR);
+  const dur=1300;let t0r=0;
+  currentIso=null;autoRot=true;
+  portG.selectAll('*').remove();
+  labelG.selectAll('*').remove();
+  cLabelG.selectAll('*').remove();
+  d3.selectAll('.land-msc').classed('land-sel',false).classed('land-sel-anim',false);
+  document.getElementById('cp-hd').style.display='none';
+  document.getElementById('cp-section-bar').style.display='none';
+  document.getElementById('cp-body').style.display='none';
+  document.getElementById('cp-empty').style.display='';
+  function animR(ts){
+    if(!t0r)t0r=ts;const t=Math.min(1,(ts-t0r)/dur);
+    const e=(1-Math.cos(t*Math.PI))/2;
+    proj.rotate(interpRot(e));
+    R=interpScale(e);proj.scale(R);
+    [sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
+    redraw(null,t<.95);
+    if(t<1)requestAnimationFrame(animR);
+    else redraw(null);
+  };requestAnimationFrame(animR);
+});
 
 function redrawPorts(selIso){
-  var vis=PORTS.reduce(function(acc,p){var pt=proj([p.lon,p.lat]);if(pt&&isVisible(p.lon,p.lat))acc.push({p:p,x:pt[0],y:pt[1]});return acc;},[]);
-  portG.selectAll('.port-ring').data(vis.filter(function(v){return v.p.iso===selIso;}),function(v){return v.p.iso+v.p.name;}).join('circle').attr('class','port-ring').attr('cx',function(v){return v.x;}).attr('cy',function(v){return v.y;}).attr('r',9);
-  portG.selectAll('.port-dot').data(vis,function(v){return v.p.iso+v.p.name;}).join(function(enter){return enter.append('circle').attr('class','port-dot').on('click',function(e,v){showCountry(v.p.iso);}).on('mouseenter',function(e,v){tip.innerHTML='<span class="tip-grad">\u2693 '+v.p.name+' \u2014 '+C[v.p.iso].name+'</span>';tip.style.opacity='1';}).on('mouseleave',function(){tip.style.opacity='0';});},function(update){return update;},function(exit){return exit.remove();}).attr('cx',function(v){return v.x;}).attr('cy',function(v){return v.y;}).attr('r',function(v){return v.p.iso===selIso?5:3.5;}).style('fill',function(v){return v.p.iso===selIso?'#ff7733':'#d4920a';});
-  labelG.selectAll('.port-name').data(vis,function(v){return v.p.iso+v.p.name;}).join('text').attr('class','port-name').attr('x',function(v){return v.x+6;}).attr('y',function(v){return v.y-4;}).text(function(v){return v.p.name;}).style('fill',function(v){return v.p.iso===selIso?'#ffc080':'#f5c84a';}).style('font-size',function(v){return v.p.iso===selIso?'9px':'7.5px';});
-}
-
-let currentSel=null;
-// Flag : animation de rotation en cours → suspend auto-rotation ET drag
-let animating=false;
-// Référence externe à redraw (défini dans .then() → exposé ici pour globeGoTo/globeZoom)
-let _globeRedraw=null;
-let _globeAutoOn=null; // setter pour autoOn depuis l'extérieur du .then()
-
-// globeGoTo : compatibilité avec les appels externes (pills, navGlobeCountry, etc.)
-function globeGoTo(iso){
-  if(!iso)return;
-  const feat=window._globeWorld?topojson.feature(window._globeWorld,window._globeWorld.objects.countries).features.find(f=>ISO_NUM[String(f.id)]===iso):null;
-  const centroid=FORCED_CENTROIDS[iso]||(feat?d3.geoCentroid(feat):null);
-  if(!centroid)return;
-  currentSel=iso;
-  if(_globeAutoOn)_globeAutoOn(false); // suspend auto-rotation
-  const cur=proj.rotate();
-  const target=[-centroid[0],-centroid[1],cur[2]];
-  const interp=d3.interpolate(cur,target);
-  const dur=700;const t0=performance.now();
-  animating=true;
-  function animRot(now){
-    const t=Math.min(1,(now-t0)/dur);
-    const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-    proj.rotate(interp(ease));
-    if(_globeRedraw)_globeRedraw(currentSel);
-    if(t<1){requestAnimationFrame(animRot);}
-    else{
-      animating=false;
-      redrawPorts(currentSel);
-      window._globeNavLock=true;
-      (function(){var _sR=R,_tR=Math.min(Math.min(W,H)*8,(window._globeBaseR||R)*8),_t0=performance.now();(function _zi(now){var t=Math.min(1,(now-_t0)/450),e=1-Math.pow(1-t,3),iR=_sR+(_tR-_sR)*e;globeZoom(iR/R);if(t<1)requestAnimationFrame(_zi);})(performance.now());})();
+  portG.selectAll('*').remove();labelG.selectAll('*').remove();
+  const sel=PORTS.filter(p=>p.iso===selIso);
+  const oth=PORTS.filter(p=>p.iso!==selIso);
+  let delay=0;
+  // Non-selected: small grey dot with fade
+  oth.forEach(p=>{
+    if(!isVis(p.lon,p.lat))return;
+    const[x,y]=proj([p.lon,p.lat]);
+    portG.append('circle').attr('cx',x).attr('cy',y).attr('r',2.5)
+      .style('fill','#555').style('opacity','0').style('cursor','pointer')
+      .transition().duration(400).style('opacity','.4')
+      .selection()
+      .on('click',()=>{showCountry(p.iso);globeGoTo(p.iso);})
+      .on('mouseenter',()=>{tip.textContent='⚓ '+p.name;tip.style.opacity='1';})
+      .on('mousemove',e=>{const rc=gArea.getBoundingClientRect();tip.style.left=Math.min(e.clientX-rc.left+14,W-260)+'px';tip.style.top=Math.max(e.clientY-rc.top-38,6)+'px';})
+      .on('mouseleave',()=>tip.style.opacity='0');
+  });
+  // Selected: gold markers with staggered pop-in
+  const placed=[];
+  sel.forEach((p,idx)=>{
+    if(!isVis(p.lon,p.lat))return;
+    const[x,y]=proj([p.lon,p.lat]);
+    portG.append('circle').attr('cx',x).attr('cy',y).attr('r',10).attr('class','port-ring')
+      .style('opacity','0').transition().delay(idx*80).duration(350).style('opacity','.6');
+    // Sonar halo
+    portG.append('circle').attr('cx',x).attr('cy',y).attr('r',4).attr('class','port-sonar')
+      .style('animation-delay',(Math.random()*2).toFixed(1)+'s');
+    const pg=portG.append('g').attr('transform','translate('+x+','+y+') scale(0)')
+      .style('opacity','0');
+    pg.append('path').attr('d','M0-5L3.5 0 0 5-3.5 0Z').attr('class','port-dot').style('stroke','#000').style('stroke-width','.5');
+    pg.append('circle').attr('r',2).style('fill','#000').style('opacity','.4');
+    // Pop-in animation
+    pg.transition().delay(idx*80).duration(400)
+      .ease(d3.easeBackOut.overshoot(1.5))
+      .attr('transform','translate('+x+','+y+') scale(1)')
+      .style('opacity','1');
+    pg.style('cursor','pointer')
+      .on('click',()=>{showCountry(p.iso);globeGoTo(p.iso);})
+      .on('mouseenter',()=>{tip.textContent='⚓ '+p.name+' · '+C[p.iso].name;tip.style.opacity='1';})
+      .on('mousemove',e=>{const rc=gArea.getBoundingClientRect();tip.style.left=Math.min(e.clientX-rc.left+14,W-260)+'px';tip.style.top=Math.max(e.clientY-rc.top-38,6)+'px';})
+      .on('mouseleave',()=>tip.style.opacity='0');
+    // Anti-collision label with fade-in
+    const LW=p.name.length*5.5,LH=11;
+    const offs=[[9,-6,'start'],[-9,-6,'end'],[9,13,'start'],[-9,13,'end'],[0,-14,'middle'],[0,21,'middle']];
+    for(const[ox,oy,anc] of offs){
+      const lx=x+ox,ly=y+oy;
+      const bx=anc==='end'?lx-LW:anc==='middle'?lx-LW/2:lx;
+      if(placed.some(b=>bx<b[2]+6&&bx+LW>b[0]-6&&ly-LH<b[3]+6&&ly>b[1]-6))continue;
+      placed.push([bx,ly-LH,bx+LW,ly]);
+      labelG.append('text').attr('x',lx).attr('y',ly).attr('text-anchor',anc)
+        .style('font-family',"'SF Pro Display',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif").style('font-size','7.5px')
+        .style('font-weight','500').style('fill','#E8C840').style('letter-spacing','0.6px')
+        .style('paint-order','stroke').style('stroke','rgba(5,5,10,.85)').style('stroke-width','2px')
+        .style('stroke-linejoin','round').style('pointer-events','none')
+        .style('opacity','0')
+        .transition().delay(idx*80+150).duration(300).style('opacity','1');
+      labelG.select('text:last-child').text(p.name);
+      break;
     }
+  });
+}
+
+function redrawCountryLabels(selIso){
+  cLabelG.selectAll('*').remove();
+  const placed=[];
+  const entries=[];
+  landG.selectAll('.land-msc').each(function(d){
+    const iso=ISO_NUM[String(d.id)];if(!iso||!C[iso])return;
+    const fc=FORCED_CENTROIDS[iso];
+    const feat=featureMap[iso];
+    const crd=fc||(feat?d3.geoCentroid(feat):null);
+    if(!crd)return;
+    const dist=d3.geoDistance(crd,proj.invert([W/2,H/2]));
+    if(dist>Math.PI/2-.08)return;
+    const pt=proj(crd);if(!pt)return;
+    const[cx,cy]=pt;
+    if(cx<12||cx>W-12||cy<12||cy>H-12)return;
+    const bounds=gpath.bounds(d);
+    const area=(bounds[1][0]-bounds[0][0])*(bounds[1][1]-bounds[0][1]);
+    const shortName=C[iso].name.replace(/MSC /,'').replace(/ \(Nous\)/,'');
+    const label=shortName;
+    entries.push({iso,cx,cy,area,dist,isSel:iso===selIso,label,shortName});
+  });
+  entries.sort((a,b)=>b.area-a.area);
+  entries.forEach(e=>{
+    const fs=e.isSel?Math.min(11,Math.max(7.5,Math.sqrt(e.area)*.06)):Math.min(8,Math.max(5.5,Math.sqrt(e.area)*.055));
+    const tw=e.label.length*fs*.5,th=fs*1.2;
+    const bx1=e.cx-tw/2,by1=e.cy-th/2;
+    if(!e.isSel&&e.area>100&&placed.some(b=>bx1<b[2]+6&&bx1+tw>b[0]-6&&by1<b[3]+4&&by1+th>b[1]-4))return;
+    placed.push([bx1,by1,bx1+tw,by1+th]);
+    const vis=Math.pow(1-e.dist/(Math.PI/2),.4);
+    const op=e.isSel?.95:Math.max(.25,vis*.55);
+    const col=e.isSel?'#E8C840':vis>.6?'rgba(255,255,255,.7)':'rgba(255,255,255,.4)';
+    const sfFont="'SF Pro Display',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif";
+    // Stroke (halo)
+    cLabelG.append('text').attr('x',e.cx).attr('y',e.cy)
+      .attr('text-anchor','middle').attr('dominant-baseline','middle').text(e.label)
+      .style('font-family',sfFont).style('font-size',fs+'px')
+      .style('font-weight',e.isSel?'600':'400').style('fill','none')
+      .style('stroke','rgba(5,5,10,.85)').style('stroke-width',e.isSel?'3px':'2px')
+      .style('stroke-linejoin','round').style('paint-order','stroke')
+      .style('pointer-events','none').style('opacity',op)
+      .style('letter-spacing',e.isSel?'1px':'0.5px').style('text-transform','capitalize');
+    // Fill
+    cLabelG.append('text').attr('x',e.cx).attr('y',e.cy)
+      .attr('text-anchor','middle').attr('dominant-baseline','middle').text(e.label)
+      .style('font-family',sfFont).style('font-size',fs+'px')
+      .style('font-weight',e.isSel?'600':'400').style('fill',col)
+      .style('letter-spacing',e.isSel?'1px':'0.5px').style('pointer-events','none').style('opacity',op)
+      .style('text-transform','capitalize');
+  });
+}
+
+let tinyG;
+function redraw(selIso,skipLabels){
+  landG.selectAll('path').attr('d',gpath);
+  if(!skipLabels){
+    gratG.select('.graticule').attr('d',gpath);
+    redrawPorts(selIso!==undefined?selIso:currentIso);
+    redrawCountryLabels(selIso!==undefined?selIso:currentIso);
   }
-  requestAnimationFrame(animRot);
 }
 
-// globeZoom : compatibilité avec les boutons +/- du HTML
-function globeZoom(factor){
-  if(!window._globeBaseR)window._globeBaseR=R;R=Math.max(110,Math.min(Math.min(W,H)*8,R*factor));window._globeR=R;
-  proj.scale(R);
-  [sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
-  if(_globeRedraw)_globeRedraw();
-}
-
+// Load world topo
 fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
   .then(r=>r.json())
   .then(world=>{
-    window._globeWorld=world; // expose pour globeGoTo
     const countries=topojson.feature(world,world.objects.countries);
-countries.features.forEach(function(ft){var iso=ISO_NUM[String(ft.id)];if(iso)featureMap[iso]=ft;});
-    const paths=landG.selectAll('path')
-      .data(countries.features)
-      .join('path')
-      .attr('class',d=>{
-        const iso=ISO_NUM[String(d.id)];
-        return iso&&MSC_SET.has(iso)?'land-msc':'land-base';
-      })
-      .attr('data-iso',d=>ISO_NUM[String(d.id)]||'')
-      .attr('d',gpath)
+    countries.features.forEach(f=>{const iso=ISO_NUM[String(f.id)];if(iso)featureMap[iso]=f;});
+    landG.selectAll('path')
+      .data(countries.features).join('path')
+      .attr('class',d=>{const iso=ISO_NUM[String(d.id)];return iso&&MSC_SET.has(iso)?'land-msc':'land-base';})
+      .attr('data-iso',d=>ISO_NUM[String(d.id)]||'').attr('d',gpath)
       .on('mouseenter',function(e,d){
-        const iso=ISO_NUM[String(d.id)];
-        if(!iso||!MSC_SET.has(iso))return;
-        tip.innerHTML='<span class="tip-grad">'+C[iso].flag+' '+C[iso].name+' \u2014 Cliquer pour contacts</span>';
-        tip.style.opacity='1';
+        const iso=ISO_NUM[String(d.id)];if(!iso||!MSC_SET.has(iso))return;
+        tip.textContent=C[iso].flag+' '+C[iso].name;tip.style.opacity='1';
       })
       .on('mousemove',function(e){
         const rc=gArea.getBoundingClientRect();
-        const tx=e.clientX-rc.left+14,ty=e.clientY-rc.top-38;
-        tip.style.left=Math.min(tx,W-260)+'px';
-        tip.style.top=Math.max(ty,6)+'px';
+        tip.style.left=Math.min(e.clientX-rc.left+14,W-260)+'px';
+        tip.style.top=Math.max(e.clientY-rc.top-36,6)+'px';
       })
       .on('mouseleave',()=>tip.style.opacity='0')
       .on('click',function(e,d){
-        const iso=ISO_NUM[String(d.id)];
-        if(!iso||!MSC_SET.has(iso))return;
-        e.stopPropagation();
-        currentSel=iso;
-        d3.selectAll('.land-msc').classed('land-sel',false);
-        d3.select(this).classed('land-sel',true);
-        // Animation de rotation vers le centroide - auto-rotation suspendue
-        const centroid=FORCED_CENTROIDS[iso]||d3.geoCentroid(d);
-        const cur=proj.rotate();
-        const target=[-centroid[0],-centroid[1],cur[2]];
-        const interp=d3.interpolate(cur,target);
-        const dur=700;const t0=performance.now();
-        animating=true;
-        function animRot(now){
-          const t=Math.min(1,(now-t0)/dur);
-          const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-          proj.rotate(interp(ease));
-          redraw(currentSel);
-          if(t<1){requestAnimationFrame(animRot);}
-          else{animating=false;}
-        }
-        requestAnimationFrame(animRot);
-        showCountry(iso);
+        const iso=ISO_NUM[String(d.id)];if(!iso||!MSC_SET.has(iso))return;
+        e.stopPropagation();currentIso=iso;
+        d3.selectAll('.land-msc').classed('land-sel',false).classed('land-sel-anim',false);
+        d3.select(this).classed('land-sel',true).classed('land-sel-anim',true);
+        showCountry(iso);globeGoTo(iso);
       });
 
-    function redraw(selIso){
-      gratG.select('.graticule').attr('d',gpath);
-      paths.attr('d',gpath);
-      
-      redrawPorts(selIso!==undefined?selIso:currentSel);
-    }
-    _globeRedraw=redraw;
-
-    // Drag + inertie
-    let dragging=false,dStart,rStart,vx=0,vy=0,lx=0,ly=0,animId;
-    function startDrag(x,y){
-      dragging=true;dStart=[x,y];rStart=[...proj.rotate()];
-      vx=0;vy=0;lx=x;ly=y;
-      if(animId)cancelAnimationFrame(animId);
-    }
-    function moveDrag(x,y){
-      if(!dragging)return;
-      vx=x-lx;vy=y-ly;lx=x;ly=y;
-      const dx=x-dStart[0],dy=y-dStart[1];
-      proj.rotate([rStart[0]+dx*.25,Math.max(-80,Math.min(80,rStart[1]-dy*.25)),rStart[2]]);
-      redraw();
-    }
-    function endDrag(){
-      if(!dragging)return;dragging=false;
-      function inertia(){
-        if(window._globeNavLock){vx=0;vy=0;return;}vx*=.96;vy*=.96;
-        if(Math.abs(vx)<.02&&Math.abs(vy)<.02)return;
-        const r=proj.rotate();
-        proj.rotate([r[0]+vx*.25,Math.max(-80,Math.min(80,r[1]-vy*.25)),r[2]]);
-        redraw();animId=requestAnimationFrame(inertia);
-      }
-      inertia();
-    }
-
+    // Drag + inertia
+    let drag=false,ds,rs,vx=0,vy=0,lx=0,ly=0,animId;
+    function startD(x,y){drag=true;ds=[x,y];rs=[...proj.rotate()];vx=0;vy=0;lx=x;ly=y;if(animId)cancelAnimationFrame(animId);}
+    function moveD(x,y){if(!drag)return;vx=x-lx;vy=y-ly;lx=x;ly=y;proj.rotate([rs[0]+(x-ds[0])*.25,Math.max(-85,Math.min(85,rs[1]-(y-ds[1])*.25)),0]);redraw();}
+    function endD(){if(!drag)return;drag=false;(function inertia(){vx*=.95;vy*=.95;if(Math.abs(vx)<.04&&Math.abs(vy)<.04)return;const r=proj.rotate();proj.rotate([r[0]+vx*.25,Math.max(-85,Math.min(85,r[1]-vy*.25)),0]);redraw();animId=requestAnimationFrame(inertia);})();}
     d3.select('#globe-area')
-      .on('mousedown',e=>{startDrag(e.clientX,e.clientY);autoOn=false;animating=false;})
-      .on('mousemove',e=>moveDrag(e.clientX,e.clientY))
-      .on('mouseup',e=>{endDrag();setTimeout(()=>autoOn=true,3000);})
-      .on('mouseleave',e=>{endDrag();setTimeout(()=>autoOn=true,3000);})
-      .on('touchstart',e=>{e.preventDefault();const t=e.touches[0];lx=t.clientX;ly=t.clientY;startDrag(t.clientX,t.clientY);autoOn=false;animating=false;})
-      .on('touchmove',e=>{e.preventDefault();const t=e.touches[0];moveDrag(t.clientX,t.clientY);})
-      .on('touchend',e=>{endDrag();setTimeout(()=>autoOn=true,3000);})
+      .on('mousedown',e=>{e.preventDefault();startD(e.clientX,e.clientY);})
+      .on('mousemove',e=>moveD(e.clientX,e.clientY))
+      .on('mouseup',endD).on('mouseleave',endD)
+      .on('touchstart',e=>{e.preventDefault();const t=e.touches[0];startD(t.clientX,t.clientY);})
+      .on('touchmove',e=>{e.preventDefault();const t=e.touches[0];moveD(t.clientX,t.clientY);})
+      .on('touchend',endD)
       .on('wheel',e=>{
         e.preventDefault();
-        R=Math.max(110,Math.min(Math.min(W,H)*.72,R*(e.deltaY>0?.90:1.11)));
-        proj.scale(R);
-        [sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
+        R=Math.max(150,Math.min(Math.min(W,H)*.85,R*(e.deltaY>0?.91:1.1)));
+        proj.scale(R);[sphereEl,glowEl,borderEl].forEach(el=>el.attr('r',R));
         redraw();
       });
-
     window.addEventListener('resize',()=>{
       W=gArea.clientWidth;H=gArea.clientHeight;
-      R=Math.min(W,H)*.43;proj.scale(R).translate([W/2,H/2]);
+      if(!currentIso)R=Math.min(W,H)*.72;proj.scale(R).translate([W/2,H/2]);
       [sphereEl,glowEl,borderEl].forEach(el=>el.attr('cx',W/2).attr('cy',H/2).attr('r',R));
       redraw();
     });
 
-    let autoOn=true;
-    _globeAutoOn=(v)=>{autoOn=v;};
-    let lastAutoTime=0;
-    (function tick(now){
-      if(autoOn&&!dragging&&!animating){
-        const r=proj.rotate();
-        proj.rotate([r[0]+.05,r[1],r[2]]);
-        redraw();
-      }
+    // Auto-rotate (stop on interaction)
+    let autoRot=true;
+    d3.select('#globe-area').on('mousedown.ar',()=>{autoRot=false;}).on('mouseup.ar2',()=>{if(!currentIso)setTimeout(()=>{autoRot=true;},4000);});
+    (function tick(){
+      if(autoRot&&!drag&&!currentIso){const r=proj.rotate();proj.rotate([r[0]+.015,r[1],r[2]]);redraw();}
       requestAnimationFrame(tick);
     })();
     redraw();
   })
   .catch(()=>{
     svg.append('text').attr('x',W/2).attr('y',H/2).attr('text-anchor','middle')
-      .attr('fill','rgba(220,180,60,.5)').attr('font-size','14')
-      .text('Globe non disponible hors connexion. Utiliser le panneau →');
-    redrawPorts(null);
+      .style('fill','rgba(200,180,80,.3)').style('font-size','13px')
+      .text('Globe non disponible — utiliser les pills →');
   });
 
 // ═══════════════════════════════════════════════
@@ -7069,14 +7121,14 @@ function updateComposerAuthState(){
   var composer=document.querySelector('.news-composer');
   var locked=document.getElementById('news-locked-msg');
   if(auth&&(auth.role==='admin'||auth.role==='poster')){
-    if(composer)composer.style.display='';
+    if(composer){composer.style.display='';composer.classList.add('authorized');}
     if(locked)locked.style.display='none';
     var ni=document.getElementById('news-author');
     if(ni){ni.value=auth.name;ni.readOnly=true;ni.style.opacity='.7';}
     var av=document.getElementById('news-author-avatar');
     if(av)av.textContent=auth.name.charAt(0).toUpperCase();
   }else{
-    if(composer)composer.style.display='none';
+    if(composer){composer.style.display='none';composer.classList.remove('authorized');}
     if(!locked){locked=document.createElement('div');locked.id='news-locked-msg';locked.className='news-locked-msg';locked.innerHTML='<p>🔒 Connectez-vous pour publier des actualités.</p>';var comp=document.querySelector('.news-composer');if(comp)comp.parentNode.insertBefore(locked,comp);}
     if(locked)locked.style.display='';
   }
