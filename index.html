@@ -715,79 +715,74 @@ a:hover{text-decoration-thickness:1px;text-underline-offset:3px}
 #pg-calc{flex-direction:column}
 #pg-calc .inner{flex:1;overflow-y:auto;min-height:0}
 
-/* ═══ À PROPOS V29 — Premium glassmorphism + 3D icons ═══ */
+/* ═══ À PROPOS V30 — Premium design, consistent typography ═══ */
 #pg-about{flex-direction:column}
 #pg-about .inner{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(232,200,64,.2) transparent}
 #pg-about .inner::-webkit-scrollbar{width:4px}
 #pg-about .inner::-webkit-scrollbar-thumb{background:rgba(232,200,64,.2);border-radius:2px}
 #pg-about .wrap{padding:0 22px 36px;max-width:960px;margin:0 auto;width:100%;box-sizing:border-box}
-/* Stats bar */
 .ab-stats-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .ab-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:6px 13px;display:flex;align-items:center;gap:8px;transition:border-color .25s}
 .ab-stat:hover{border-color:rgba(232,200,64,.2)}
-.ab-stat-n{font:700 .95rem/1 'JetBrains Mono',monospace;color:var(--gold)}
-.ab-stat-l{font:500 .56rem/1.3 -apple-system,sans-serif;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.5px}
-/* Sep */
+.ab-stat-n{font:700 .95rem/1 'Barlow Condensed',sans-serif;color:var(--gold);letter-spacing:.5px}
+.ab-stat-l{font:500 .56rem/1.3 'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.5px}
 .ab-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);margin:14px 0}
-/* Genèse — gold left-border columns */
-.ab-genesis{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden;margin-bottom:13px}
+.ab-genesis{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;margin-bottom:13px}
 .ab-genesis::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,200,64,.3),transparent)}
-.ab-genesis-label{font:.44rem/1 'JetBrains Mono',monospace;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:11px}
-.ab-genesis-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ab-genesis-label{font:600 .5rem/1 'Barlow Condensed',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px}
+.ab-genesis-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 @media(max-width:680px){.ab-genesis-cols{grid-template-columns:1fr}}
 .ab-genesis-col{border-left:2px solid rgba(232,200,64,.15);padding-left:14px;transition:border-color .3s}
 .ab-genesis-col:hover{border-color:rgba(232,200,64,.5)}
-.ab-genesis-col h4{font-family:'Barlow Condensed',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:0 0 7px}
-.ab-genesis-col p{font-size:.68rem;color:rgba(255,255,255,.48);line-height:1.7;margin:0}
-.ab-genesis-col p strong{color:rgba(255,255,255,.78);font-weight:500}
-/* 3D icon */
+.ab-genesis-col h4{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:0 0 8px}
+.ab-genesis-col p{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif;font-size:.72rem;color:rgba(255,255,255,.5);line-height:1.7;margin:0}
+.ab-genesis-col p strong{color:rgba(255,255,255,.8);font-weight:600}
 .about-icon-3d{position:relative;width:48px;height:48px;border-radius:13px;background:linear-gradient(145deg,#1c1c1c,#0d0d0d);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;margin-bottom:11px;box-shadow:inset 1px 1px 2px rgba(255,255,255,.06),0 2px 4px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3),0 0 20px rgba(232,200,64,.04);transition:all .35s cubic-bezier(.23,1,.32,1)}
 .about-icon-3d::before{content:'';position:absolute;top:0;left:0;width:100%;height:50%;border-radius:13px 13px 0 0;background:linear-gradient(180deg,rgba(232,200,64,.08) 0%,transparent 100%);pointer-events:none}
-/* Glassmorphism card */
 .about-card-glass{background:rgba(255,255,255,.03);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(232,200,64,.08);border-radius:14px;padding:16px 15px 14px;transition:all .35s cubic-bezier(.23,1,.32,1);cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.04)}
 .about-card-glass::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,200,64,.22),transparent);opacity:.5;transition:opacity .3s}
-.about-card-glass::after{content:'→';position:absolute;bottom:13px;right:14px;font-size:.75rem;color:rgba(232,200,64,.25);transition:all .3s}
+.about-card-glass::after{content:'\2192';position:absolute;bottom:13px;right:14px;font-size:.75rem;color:rgba(232,200,64,.25);transition:all .3s}
 .about-card-glass:hover{transform:translateY(-4px);border-color:rgba(232,200,64,.2);background:rgba(255,255,255,.05);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 24px rgba(232,200,64,.06),inset 0 1px 0 rgba(255,255,255,.06)}
 .about-card-glass:hover::before{opacity:1}
 .about-card-glass:hover::after{color:rgba(232,200,64,.65);transform:translateX(3px)}
 .about-card-glass:hover .about-icon-3d{transform:translateY(-2px);box-shadow:inset 1px 1px 2px rgba(255,255,255,.08),0 4px 8px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.4),0 12px 36px rgba(0,0,0,.3),0 0 30px rgba(232,200,64,.09)}
-/* Features grid 4×2 */
 .ab-features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px}
 @media(max-width:800px){.ab-features-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.ab-features-grid{grid-template-columns:1fr}}
-.ab-feat-title{font:700 .78rem/1.2 'SF Pro Display',-apple-system,sans-serif;color:var(--white);margin-bottom:4px}
-.ab-feat-text{font:300 .63rem/1.6 -apple-system,sans-serif;color:rgba(255,255,255,.42);padding-right:18px}
-/* Elegant tag */
+.ab-feat-title{font:700 .78rem/1.2 'Barlow Condensed',sans-serif;color:var(--white);margin-bottom:4px;letter-spacing:.5px}
+.ab-feat-text{font:400 .65rem/1.6 'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif;color:rgba(255,255,255,.45);padding-right:18px}
 .about-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.48rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:rgba(232,200,64,.06);border:1px solid rgba(232,200,64,.15);color:rgba(232,200,64,.65);margin-top:10px}
-/* Video */
-.ab-video-card{background:var(--black2);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;position:relative}
-.ab-video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,200,64,.4),transparent);z-index:1;pointer-events:none}
-.ab-video-label{padding:6px 14px;font:.44rem 'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:8px}
-.ab-video-wrap{background:#000;height:130px}
+.ab-video-section{margin-bottom:18px}
+.ab-video-section-label{font:600 .5rem/1 'Barlow Condensed',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ab-video-section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,200,64,.2),transparent)}
+.ab-video-card{background:var(--black2);border:1px solid rgba(232,200,64,.12);border-radius:16px;overflow:hidden;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(232,200,64,.05)}
+.ab-video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(232,200,64,.5),transparent);z-index:1;pointer-events:none}
+.ab-video-label{padding:10px 18px;font:600 .52rem/1 'Barlow Condensed',sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:10px;background:rgba(232,200,64,.03)}
+.ab-video-wrap{background:#000;aspect-ratio:16/9;max-height:420px}
 .ab-video-wrap video{width:100%;height:100%;object-fit:contain;display:block}
-/* Metrics */
-.ab-metric{text-align:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:10px 8px;transition:border-color .25s;flex:1}
+.ab-metrics-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+@media(max-width:680px){.ab-metrics-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.ab-metrics-row{grid-template-columns:repeat(2,1fr)}}
+.ab-metric{text-align:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:12px 8px;transition:border-color .25s;flex:1}
 .ab-metric:hover{border-color:rgba(232,200,64,.2)}
-.ab-metric-n{font:700 1.45rem/1 'Barlow Condensed',sans-serif;color:var(--gold);letter-spacing:-.01em}
-.ab-metric-l{font:500 .52rem/1.35 -apple-system,sans-serif;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin-top:3px}
-/* Team section */
-.ab-team-label{font:.44rem 'JetBrains Mono',monospace;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:11px;display:flex;align-items:center;gap:10px}
+.ab-metric-n{font:700 1.6rem/1 'Barlow Condensed',sans-serif;color:var(--gold);letter-spacing:-.01em}
+.ab-metric-l{font:500 .55rem/1.35 'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+.ab-team-label{font:600 .5rem/1 'Barlow Condensed',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:11px;display:flex;align-items:center;gap:10px}
 .ab-team-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(232,200,64,.2),transparent)}
-.ab-team-card-v29{background:#141414;border-radius:14px;padding:16px 18px;position:relative;transition:all .35s cubic-bezier(.23,1,.32,1);max-width:360px;display:flex;align-items:center;gap:14px}
-.ab-team-card-v29::before{content:'';position:absolute;inset:-1px;border-radius:15px;background:linear-gradient(135deg,rgba(232,200,64,.15),rgba(232,200,64,.03) 40%,rgba(232,200,64,.03) 60%,rgba(232,200,64,.15));z-index:-1;opacity:0;transition:opacity .3s}
+.ab-team-card-v29{background:linear-gradient(145deg,#161616,#111);border:1px solid rgba(232,200,64,.08);border-radius:16px;padding:20px 22px;position:relative;transition:all .35s cubic-bezier(.23,1,.32,1);max-width:400px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.ab-team-card-v29::before{content:'';position:absolute;inset:-1px;border-radius:17px;background:linear-gradient(135deg,rgba(232,200,64,.18),rgba(232,200,64,.03) 40%,rgba(232,200,64,.03) 60%,rgba(232,200,64,.18));z-index:-1;opacity:0;transition:opacity .3s}
 .ab-team-card-v29:hover::before{opacity:1}
-.ab-team-card-v29:hover{transform:translateY(-4px);background:#1a1a1a;box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 20px rgba(232,200,64,.04)}
-.ab-avatar-ring{width:46px;height:46px;border-radius:50%;background:var(--gold);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.88rem;flex-shrink:0;box-shadow:0 0 0 3px rgba(232,200,64,.15),0 4px 12px rgba(0,0,0,.3)}
-.ab-tc-name{font:700 .85rem/1.2 'SF Pro Display',-apple-system,sans-serif;color:var(--white);margin-bottom:2px}
-.ab-tc-role{font:500 .62rem/1.4 -apple-system,sans-serif;color:rgba(255,255,255,.42)}
-.ab-tc-edu{font:400 .56rem/1.4 'JetBrains Mono',monospace;color:rgba(255,255,255,.25);letter-spacing:.3px;margin-top:1px}
-.ab-tc-linkedin{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font:600 .56rem/1 'Barlow Condensed',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;transition:color .2s}
-.ab-tc-linkedin:hover{color:var(--gold)}
-/* Stack */
+.ab-team-card-v29:hover{transform:translateY(-4px);background:linear-gradient(145deg,#1c1c1c,#141414);box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 24px rgba(232,200,64,.06)}
+.ab-avatar-ring{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--black);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.95rem;flex-shrink:0;box-shadow:0 0 0 3px rgba(232,200,64,.15),0 4px 16px rgba(0,0,0,.4),0 0 20px rgba(232,200,64,.1)}
+.ab-tc-name{font:700 .9rem/1.2 'Barlow Condensed',sans-serif;color:var(--white);margin-bottom:3px;letter-spacing:.5px}
+.ab-tc-role{font:500 .65rem/1.4 'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif;color:rgba(255,255,255,.45)}
+.ab-tc-edu{font:400 .58rem/1.4 'JetBrains Mono',monospace;color:rgba(255,255,255,.28);letter-spacing:.3px;margin-top:2px}
+.ab-tc-linkedin{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:600 .58rem/1 'Barlow Condensed',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;transition:all .25s;padding:4px 12px;border-radius:6px;background:rgba(232,200,64,.06);border:1px solid rgba(232,200,64,.12)}
+.ab-tc-linkedin:hover{color:var(--gold);background:rgba(232,200,64,.12);border-color:rgba(232,200,64,.25);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,200,64,.1)}
 .ab-stack{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:4px}
-.ab-stack-tag{font:.42rem/1 'JetBrains Mono',monospace;letter-spacing:1.2px;text-transform:uppercase;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.26)}
-.ab-version{font:.43rem/1 'JetBrains Mono',monospace;letter-spacing:1.5px;color:rgba(255,255,255,.18)}
-/* Scroll reveal */
+.ab-stack-tag{font:.44rem/1 'JetBrains Mono',monospace;letter-spacing:1.2px;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);transition:border-color .2s}
+.ab-stack-tag:hover{border-color:rgba(232,200,64,.15)}
+.ab-version{font:500 .46rem/1 'Barlow Condensed',sans-serif;letter-spacing:2px;color:rgba(255,255,255,.22);text-transform:uppercase}
 .about-reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
 .about-visible{opacity:1;transform:translateY(0)}
 .ab-features-grid .about-reveal:nth-child(2){transition-delay:.07s}
@@ -3654,21 +3649,22 @@ ANCHOR RINGS</div></div></div>
   </div>
 
   <!-- ── Vidéo + métriques ── -->
-  <div style="display:grid;grid-template-columns:3fr 2fr;gap:11px;margin-bottom:13px" class="about-reveal">
+  <div class="ab-video-section about-reveal">
+    <div class="ab-video-section-label">Présentation du projet</div>
     <div class="ab-video-card">
-      <div class="ab-video-label">▶&nbsp;&nbsp;Présentation du projet</div>
+      <div class="ab-video-label">▶&nbsp;&nbsp;Sextant — Le portail Cross-Booking MSC</div>
       <div class="ab-video-wrap">
         <video controls preload="auto" playsinline>
-          <source src="sextant.mp4" type="video/mp4">
+          <source src="SEXTANT_FINAL.mp4" type="video/mp4">
         </video>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start">
+    <div class="ab-metrics-row">
       <div class="ab-metric"><div class="ab-metric-n">23</div><div class="ab-metric-l">Pays MSC</div></div>
       <div class="ab-metric"><div class="ab-metric-n">346</div><div class="ab-metric-l">Emails @msc.com</div></div>
       <div class="ab-metric"><div class="ab-metric-n">37</div><div class="ab-metric-l">Ports européens</div></div>
       <div class="ab-metric"><div class="ab-metric-n">691</div><div class="ab-metric-l">Codes HS</div></div>
-      <div class="ab-metric" style="grid-column:1/-1"><div class="ab-metric-n">8</div><div class="ab-metric-l">Pages dédiées</div></div>
+      <div class="ab-metric"><div class="ab-metric-n">8</div><div class="ab-metric-l">Pages dédiées</div></div>
     </div>
   </div>
 
@@ -3682,20 +3678,20 @@ ANCHOR RINGS</div></div></div>
         <div class="ab-tc-name">Louis Rivault</div>
         <div class="ab-tc-role">Coordinateur Logistique · Alternance</div>
         <div class="ab-tc-edu">BTS GTLA — EM Normandie · 2024–2026</div>
-        <a class="ab-tc-linkedin" href="https://www.linkedin.com/in/louis-rivault/" target="_blank" rel="noopener">
+        <a class="ab-tc-linkedin" href="https://www.linkedin.com/in/louis-rivault-b267502aa?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </a>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px;padding-top:2px">
-      <div class="ab-version">Portal Sextant · v29.0 · 2025</div>
+      <div class="ab-version">Portal Sextant · v30.0 · 2025</div>
       <div class="ab-stack">
         <span class="ab-stack-tag">HTML5</span>
         <span class="ab-stack-tag">Vanilla JS</span>
         <span class="ab-stack-tag">CSS3</span>
         <span class="ab-stack-tag">JSONBlob</span>
-        <span class="ab-stack-tag">Cloudflare Pages</span>
+        <span class="ab-stack-tag">GitHub Pages</span>
       </div>
     </div>
   </div>
