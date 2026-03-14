@@ -13,13 +13,12 @@ jobs:
       
       - name: Download and decode video
         run: |
-          curl -s https://dpaste.com/AD5EBYSFF.txt >> video.b64
-          curl -s https://dpaste.com/HA683GZZW.txt >> video.b64
-          curl -s https://dpaste.com/C4S3NFBUH.txt >> video.b64
-          curl -s https://dpaste.com/H6839ND49.txt >> video.b64
-          curl -s https://dpaste.com/AA69EDQ8G.txt >> video.b64
-          tr -d '\n' < video.b64 | base64 -d > sextant.mp4
-          ls -la sextant.mp4
+          for url in AD5EBYSFF HA683GZZW C4S3NFBUH H6839ND49 AA69EDQ8G; do
+            curl -s "https://dpaste.com/${url}.txt" | tr -d '\n\r ' >> video.b64
+          done
+          echo "Base64 file size: $(wc -c < video.b64)"
+          base64 -d video.b64 > sextant.mp4
+          echo "Video file size: $(ls -la sextant.mp4)"
           rm video.b64
       
       - name: Commit video
