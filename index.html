@@ -2428,7 +2428,9 @@ var PORTAL_USERS=[
   {name:'Kathy',    lastName:'',           email:'kathy@msc.com',                pin:'7890', role:'poster',
    secQ:'Quel est votre prénom ?',          secA:'kathy'},
   {name:'Carole',   lastName:'',           email:'carole@msc.com',               pin:'2345', role:'poster',
-   secQ:'Quel est votre prénom ?',          secA:'carole'}
+   secQ:'Quel est votre prénom ?',          secA:'carole'},
+  {name:'Consultation', lastName:'',       email:'consultation@msc-sextant.fr',  pin:'2024', role:'lecteur',
+   secQ:'Quel est le nom du portail ?',     secA:'sextant'}
 ];
 // V20 — Accès administrateur universel (mot de passe fort, accès de secours)
 var ADMIN_MASTER={email:'admin@sextant.msc', pwd:'MSC@4821Sxt!', role:'admin', name:'Administrateur'};
@@ -7073,7 +7075,8 @@ var AUTHORIZED_POSTERS=[
   {name:'Honorine',pin:'5678',role:'admin'},
   {name:'Estelle',pin:'9012',role:'admin'},
   {name:'Kathy',pin:'7890',role:'poster'},
-  {name:'Carole',pin:'2345',role:'poster'}
+  {name:'Carole',pin:'2345',role:'poster'},
+  {name:'Consultation',pin:'2024',role:'lecteur'}
 ];
 // V19 — isAuthorized lit depuis la session de login (msc-user en priorité)
 function isAuthorized(){
